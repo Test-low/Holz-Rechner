@@ -9,7 +9,7 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" type="image/png" href="./icons/icon-192.png">
   <link rel="apple-touch-icon" href="./icons/icon-192.png">
-  <title>Kubikmeter-Rechner | HolzWerk</title>
+  <title>Kubikmeter-Rechner | HolzOptiX</title>
   <style>
     :root {
       color-scheme: light;
@@ -147,7 +147,7 @@
 <body>
   <main class="shell">
     <header class="topbar">
-      <div class="identity"><span class="brandmark" aria-hidden="true">m³</span><span>HOLZWERK <span style="color:var(--green)">/</span> MOBIL</span></div>
+      <div class="identity"><span class="brandmark" aria-hidden="true">m³</span><span>HOLZOPTIX <span style="color:var(--green)">/</span> MOBIL</span></div>
       <button id="theme-toggle" class="theme-button" type="button" aria-label="Darstellung wechseln">☾ <span id="theme-label">Dunkel</span></button>
     </header>
 
@@ -228,8 +228,10 @@
   <script>
   (() => {
     'use strict';
-    const STORAGE_KEY = 'holzwerk-m3-positionen-v1';
-    const THEME_KEY = 'holzwerk-m3-theme-v1';
+    const STORAGE_KEY = 'holzoptix-m3-positionen-v1';
+    const THEME_KEY = 'holzoptix-m3-theme-v1';
+    const OLD_STORAGE_KEY = 'holzwerk-m3-positionen-v1';
+    const OLD_THEME_KEY = 'holzwerk-m3-theme-v1';
     const factors = { mm: 0.001, cm: 0.01, m: 1 };
     const get = id => document.getElementById(id);
     const fields = ['description', 'thickness', 'thickness-unit', 'width', 'width-unit', 'length', 'length-unit', 'quantity'];
@@ -415,6 +417,17 @@
       store(THEME_KEY, value);
     };
     get('theme-toggle').addEventListener('click', () => setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+    // Bei einem Update vorhandene Positionen und das Farbschema uebernehmen.
+    try {
+      if (localStorage.getItem(STORAGE_KEY) === null) {
+        const old = load(OLD_STORAGE_KEY);
+        if (Array.isArray(old)) store(STORAGE_KEY, old);
+      }
+      if (localStorage.getItem(THEME_KEY) === null) {
+        const old = load(OLD_THEME_KEY);
+        if (old === 'dark' || old === 'light') store(THEME_KEY, old);
+      }
+    } catch (_) {}
     const saved = load(STORAGE_KEY);
     if (Array.isArray(saved)) positions = saved.slice(0, 3000).map(cleanEntry).filter(Boolean);
     setTheme(load(THEME_KEY) === 'dark' ? 'dark' : 'light');
