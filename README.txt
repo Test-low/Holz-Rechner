@@ -1,48 +1,42 @@
-HOLZOPTIX MOBIL – KUBIKMETER-SCHNELLERFASSUNG V2.3
+HOLZOPTIX MOBIL – KUBIKMETER-SCHNELLERFASSUNG V2.4
 
-GitHub Pages aktualisieren:
-1. ZIP auf dem PC entpacken.
-2. Alle Dateien (index.html, sw.js, manifest.webmanifest,
-   aktualisieren.html, icons/) in das HAUPTVERZEICHNIS des
-   bestehenden GitHub-Pages-Repositories hochladen und alte ersetzen.
-3. Commit changes bestätigen.
-4. GitHub Pages auf dem Handy erneut öffnen.
-   Wenn die alte Version im Offline-Cache ist: /aktualisieren.html aufrufen.
-
-Schnellerfassung:
-- Auftrag/Holzart einmal eintragen, z.B. Eiche Wurm
-- Je Längenreihe Länge in Metern und Stärke in mm eingeben
-- Breiten in Zentimetern einfach eintippen, z.B. 40, 30, 25, 30, 40, 40, 40
-- Breiten können mit Komma, Leerzeichen, / oder ; getrennt werden.
-- 40x3 entspricht drei Bohlen mit 40 cm Breite.
-- Breiten mit Dezimalstelle mit Punkt eingeben, z.B. 32.5
-- Für eine weitere Länge + Nächste Länge erfassen wählen.
-- Alternativ ganze Zeilen wie '4,50 x 40 / 30 / 25' einfügen.
-- Die Summen verändern sich sofort beim Tippen.
-
-Die Daten bleiben lokal im Browser. Die App übernimmt bei der ersten
-Benutzung vorhandene Einzelpositionen der HolzOptiX- und älteren
-HolzWerk-Kubikmeter-Version. Die alten Daten werden NICHT gelöscht.
-
-WICHTIG: Nicht auf unterschiedlichen Geräten dieselbe lokale Liste erwarten;
-für Übertragung JSON-Sicherung exportieren und importieren.
-
-Wenn bei GitHub Pages die alten Daten nicht auftauchen, sicherstellen,
-dass die URL (Domain/Repository-Pfad) gleich geblieben ist.
-
-Druck / PDF (OHNE BRANDING UND WEBADRESSE):
-- Die Eingabereihenfolge bleibt wie eingetippt.
-- Für Druck/PDF werden Längen aufsteigend (kurz nach lang) sortiert.
-- Bei gleicher Länge stehen die Breiten aufsteigend (schmal nach breit).
-- Identische Länge, Breite, Stärke und Notiz werden zu einer Anzahl zusammengefasst.
-- Die Kubikmeter je Maß und die Gesamtsumme werden im Ausdruck angezeigt.
-- Auf dem Ausdruck erscheint weder HolzOptiX noch ein Logo oder eine Signatur.
-- Das PDF bekommt als vorgeschlagenen Titel „Bohlenliste“.
-- Der neue Button „PDF ohne Internetadresse“ erstellt eine eigenständige A4-PDF-Datei direkt auf dem Gerät. In dieser PDF stehen keine Webseitenadresse oder Browser-Kopf-/Fußzeilen.
-- Der normale Browserdruck versucht die Internetadresse über @page margin:0 zu unterdrücken. Einzelne Browser/Druckertreiber können das übersteuern; die direkte PDF ist die sichere Alternative.
-- PDF-Datei zum Drucken öffnen (auch auf Mobilgeräten).
-- Die Druckfunktion funktioniert auch über das Browser-Menü / Strg+P.
-- Die gespeicherten Eingaben und vorhandenen Sicherungen bleiben unverändert.
-
-Dein bisheriger GitHub-Pages-Link bleibt unverändert:
+GitHub Pages bleibt unverändert:
 https://test-low.github.io/Holz-Rechner/
+
+UPDATE: ZIP entpacken. index.html, sw.js, manifest.webmanifest,
+aktualisieren.html und den icons-Ordner IN DAS HAUPTVERZEICHNIS
+des bestehenden GitHub-Repositories test-low/Holz-Rechner hochladen,
+vorhandene Dateien ersetzen und Commit changes wählen.
+Wenn noch die alte Fassung zu sehen ist: .../aktualisieren.html öffnen.
+
+NEU IN V2.4:
+1. Intelligente Schnelleingabe: Eingabe von z. B. 40 30 25 40x5 35x2.
+   '40x5' bedeutet fünf Bohlen zu 40 cm Breite; 40 × 5 geht ebenfalls.
+   Komma, Leerzeichen, Semikolon, Schrägstrich oder neue Zeile trennen.
+   Dezimalbreiten wie 32.5 mit Punkt eingeben.
+2. Rückgängig: Schaltfläche macht Eingaben, Löschen, Anlegen einer
+   Längenreihe, Massenimport, Neue Liste und Rücksicherung rückgängig.
+   Bis zu 35 Änderungsschritte während die Seite geöffnet ist.
+3. PDF und Browserdruck: Sortiert von kurzer nach langer Länge,
+   innerhalb der Länge nach Breite. Pro Länge werden Stückzahl und
+   Kubikmeter als Zwischensumme ausgewiesen. Gleiche Maße werden
+   zusammengefasst. Abschluss mit Gesamtzahl und Gesamtvolumen.
+4. Smartphone: Größere Felder, mitlaufende Gesamtsumme unten am Rand,
+   Schaltfläche '+ Neue Länge', Breitenfelder wachsen beim Tippen mit.
+5. Sicherung / Wiederherstellung: JSON-Datei laden/speichern;
+   vor Rücksicherung erscheint ein Vergleich mit der aktuellen Liste.
+   Rücksicherung kann unmittelbar rückgängig gemacht werden.
+
+WEITERHIN VORHANDEN:
+- Eingabe beliebiger Breitenreihenfolge; Eingaben bleiben unsortiert.
+- Holzart/Auftrag, Stärke je Reihe, Kommentare, CSV-Ausgabe.
+- Direkter PDF-Export ohne Browser-URL, Logos und Signaturen.
+- Browserdruck mit neutraler Bohlenliste.
+- Offline-Funktion, automatisches lokales Speichern, Darkmode,
+  vollständige Listenübernahme aus älteren Versionen.
+- Die alten lokalen Daten und bestehenden Sicherungen bleiben lesbar.
+
+HINWEIS: Die erzeugte PDF enthält absichtlich keinen Produktnamen.
+Die normale Browser-Druckfunktion kann je nach Browser eigene Kopf-
+und Fußzeilen hinzufügen. Für URL-freies Drucken den direkten PDF-
+Export benutzen. Die URL ändert sich NICHT durch dieses Update.
