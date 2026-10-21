@@ -24,7 +24,7 @@
     await Promise.all(keys.filter(k=>k.startsWith('holzwerk-m3-')||k.startsWith('holzoptix-m3-')).map(k=>caches.delete(k)));
    }
    status.textContent='Erledigt. Öffne die aktuelle Version …';
-   location.replace('./index.html?holzo-update=230');
-  }catch(e){status.textContent='Automatisch nicht möglich: '+e.message+' – bitte die Seite mit ?holzo-update=230 öffnen.';this.disabled=false;}
+   location.replace('./index.html?holzo-update=250');
+  }catch(e){status.textContent='Automatisch nicht möglich: '+e.message+' – bitte die Seite mit ?holzo-update=250 öffnen.';this.disabled=false;}
  });
 </script></main></body></html>

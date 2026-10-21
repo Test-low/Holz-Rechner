@@ -26,6 +26,14 @@
 .save-notice{font-size:12px;color:var(--muted);margin:7px 0 0}
 .mobile-dock{display:none}
 .backup-detail{margin:9px 0 0;font-size:12px;color:var(--muted)}
+.print-mobile-options[hidden]{display:none!important}
+.print-mobile-options{margin:13px 0 8px;padding:13px;background:var(--light);border:1px solid var(--line);border-radius:12px}
+.print-mobile-options strong{display:block;font-size:14px;color:var(--ink)}
+.print-mobile-options p{color:var(--ink);font-size:13px;margin:6px 0 11px}
+.print-mobile-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.print-mobile-actions a{display:flex;align-items:center;justify-content:center;text-align:center;text-decoration:none;min-height:50px}
+@media(max-width:370px){.print-mobile-actions{grid-template-columns:1fr}}
+
 @media(max-width:550px){
  .wrap{padding-bottom:100px}
  .summary{position:relative;top:auto}
@@ -84,8 +92,17 @@
 <div id="entries"></div>
 <div class="actions-row no-print"><button id="add-row" class="btn add" type="button">+ Nächste Länge erfassen</button><button id="undo" class="undo-btn" type="button" disabled title="Letzte Änderung rückgängig machen">↶ Rückgängig</button></div>
 <section class="card import-details no-print"><details id="bulk-details"><summary>Komplette handschriftliche Liste auf einmal eingeben</summary><p>Eine Zeile je Länge, dahinter die Breiten mit <code>/</code>, Komma oder Leerzeichen trennen. Beispiel:</p><textarea id="bulk-input" class="import-text" placeholder="4,50 x 40 / 30 / 25 / 30 / 40 / 40 / 40&#10;4,00 x 30 / 35 / 38 / 70&#10;3,35 x 70 / 40 / 40 / 20 / 20 / 20" spellcheck="false"></textarea><div class="import-controls"><button class="btn btn-primary" id="bulk-add" type="button">Zeilen übernehmen</button><span class="tiny" id="bulk-message" role="status"></span></div></details></section>
-<section class="card no-print"><div class="card-head"><h2>Ergebnis sichern</h2><span class="sub">Für Büro und Baustelle</span></div><div class="toolbar"><button class="btn btn-secondary" id="csv" type="button">CSV exportieren</button><button class="btn btn-secondary" id="print" type="button">Sortiert drucken</button><button class="btn btn-primary" id="pdf" type="button">PDF ohne Internetadresse</button><button class="btn btn-secondary" id="backup" type="button">Sicherung (JSON)</button><button class="btn btn-secondary" id="restore" type="button">Sicherung öffnen</button><button class="btn btn-danger" id="clear" type="button">Neue Liste beginnen</button></div><p class="note">Für einen Ausdruck ohne Webseitenadresse „PDF ohne Internetadresse“ wählen und die heruntergeladene Datei drucken. Eingaben bleiben unsortiert, der Ausdruck ist nach Länge und Breite sortiert und enthält Zwischensummen je Länge.</p><p class="backup-detail"><b>Sicherung:</b> Die JSON-Datei enthält deinen Auftrag und alle Eingaben. Zum Übertragen auf ein anderes Handy dort „Sicherung öffnen“ wählen. Vor dem Ersetzen wird nachgefragt; die Änderung kann direkt rückgängig gemacht werden.</p><input id="restore-file" type="file" accept=".json,application/json" hidden><p class="status" id="status" role="status"></p></section>
-<p class="footer">Breiten standardmäßig in <b>cm</b>, Längen in <b>m</b>, Stärke in <b>mm</b>. Beispielsweise bedeutet „40 30 25“ drei Bohlen. <b>40x3</b> erfasst drei gleich breite Bohlen. Für Breiten mit Nachkommastelle einen Punkt verwenden (z. B. 32.5). Änderungen werden nur auf diesem Gerät im Browser gespeichert. Bestehende Daten der vorherigen Version werden beim ersten Öffnen übernommen; deren Originalspeicher bleibt unangetastet.<br>HolzOptiX Mobil · Version 2.4 · <a href="./aktualisieren.html">Offline-Version aktualisieren</a></p>
+<section class="card no-print"><div class="card-head"><h2>Ergebnis sichern</h2><span class="sub">Für Büro und Baustelle</span></div><div class="toolbar"><button class="btn btn-secondary" id="csv" type="button">CSV exportieren</button><button class="btn btn-secondary" id="print" type="button">Sortiert drucken</button><button class="btn btn-primary" id="pdf" type="button">PDF ohne Internetadresse</button><button class="btn btn-secondary" id="backup" type="button">Sicherung (JSON)</button><button class="btn btn-secondary" id="restore" type="button">Sicherung öffnen</button><button class="btn btn-danger" id="clear" type="button">Neue Liste beginnen</button></div>
+<div id="print-mobile-options" class="print-mobile-options" hidden>
+  <strong>Sortierte Druckliste bereit</strong>
+  <p id="print-mobile-message">Die PDF enthält alle Bohlen, sortiert nach Länge und Breite, mit Zwischensummen. Öffne sie und wähle dort „Drucken“.</p>
+  <div class="print-mobile-actions">
+    <a class="btn btn-primary" id="print-open" href="#" target="_blank" rel="noopener">PDF zum Drucken öffnen</a>
+    <a class="btn btn-secondary" id="print-save" href="#" download="Bohlenliste.pdf">PDF speichern</a>
+  </div>
+</div>
+<p class="note">Auf dem Handy öffnet „Sortiert drucken“ die sortierte PDF zum anschließenden Drucken. Alternativ „PDF ohne Internetadresse“ wählen und die Datei drucken. Eingaben bleiben unsortiert, der Ausdruck ist nach Länge und Breite sortiert und enthält Zwischensummen je Länge.</p><p class="backup-detail"><b>Sicherung:</b> Die JSON-Datei enthält deinen Auftrag und alle Eingaben. Zum Übertragen auf ein anderes Handy dort „Sicherung öffnen“ wählen. Vor dem Ersetzen wird nachgefragt; die Änderung kann direkt rückgängig gemacht werden.</p><input id="restore-file" type="file" accept=".json,application/json" hidden><p class="status" id="status" role="status"></p></section>
+<p class="footer">Breiten standardmäßig in <b>cm</b>, Längen in <b>m</b>, Stärke in <b>mm</b>. Beispielsweise bedeutet „40 30 25“ drei Bohlen. <b>40x3</b> erfasst drei gleich breite Bohlen. Für Breiten mit Nachkommastelle einen Punkt verwenden (z. B. 32.5). Änderungen werden nur auf diesem Gerät im Browser gespeichert. Bestehende Daten der vorherigen Version werden beim ersten Öffnen übernommen; deren Originalspeicher bleibt unangetastet.<br>HolzOptiX Mobil · Version 2.5 · <a href="./aktualisieren.html">Offline-Version aktualisieren</a></p>
 <section id="print-sheet" class="print-sheet" aria-label="Sortierte Druckliste">
 <div class="print-header"><div><div class="print-heading">Bohlenliste</div><div class="print-muted" id="print-project"></div><div class="print-muted">Sortiert: Länge kurz → lang, Breite schmal → breit</div></div><div class="print-date" id="print-date"></div></div>
 <table><thead><tr><th>Länge (m)</th><th>Breite (cm)</th><th>Stärke (mm)</th><th>Anzahl</th><th>Volumen (m³)</th><th class="print-note">Notiz</th></tr></thead><tbody id="print-rows"></tbody><tfoot><tr><td colspan="3">Gesamt</td><td id="print-qty"></td><td id="print-sum"></td><td></td></tr></tfoot></table>
@@ -212,7 +229,42 @@ window.addEventListener('beforeprint',()=>{
   document.title='Bohlenliste';
 });
 window.addEventListener('afterprint',()=>{document.title=originalPageTitle});
-$('print').addEventListener('click',()=>{updatePrintable();window.print()});
+// Einige Handy-Browser und installierte PWAs zeigen bei window.print() keinen Dialog.
+// Auf Handys deshalb direkt das bereits vorhandene, neutrale PDF öffnen.
+// Die sichtbaren Links bleiben als Alternative, wenn das Öffnen blockiert wird.
+let printPdfUrl=null;
+function openMobileSortedPrint(){
+  try{
+    const blob=buildBohlenPdf();
+    if(printPdfUrl)URL.revokeObjectURL(printPdfUrl);
+    printPdfUrl=URL.createObjectURL(blob);
+    const clean=(state.project.trim()||'Bohlenliste').replace(/[^a-zA-Z0-9äöüÄÖÜß\-_ ]/g,'').trim().replace(/\s+/g,'-').slice(0,45)||'Bohlenliste';
+    $('print-open').href=printPdfUrl;
+    $('print-save').href=printPdfUrl;
+    $('print-save').download=clean+'-Bohlenliste.pdf';
+    $('print-mobile-options').hidden=false;
+    $('print-mobile-message').textContent='Die sortierte PDF ist bereit. Im PDF-Menü „Drucken“ auswählen. Falls sich kein Fenster geöffnet hat, unten auf „PDF zum Drucken öffnen“ tippen.';
+    $('status').textContent='Sortierte Druckliste als PDF bereit – ohne Webseitenadresse.';
+    // Synchron während der Nutzeraktion: dadurch erlauben viele Browser das neue Fenster.
+    // Unterdrückte Pop-ups sind kein Fehler: die beiden Links bleiben bedienbar.
+    let opened=null;
+    try{opened=window.open(printPdfUrl,'_blank');}catch(_e){}
+    if(!opened){
+      $('print-mobile-message').textContent='Der Browser hat die automatische PDF-Vorschau blockiert. Tippe auf „PDF zum Drucken öffnen“ oder „PDF speichern“ und drucke die Datei von dort.';
+    }
+    $('print-mobile-options').scrollIntoView({behavior:'smooth',block:'nearest'});
+  }catch(e){
+    $('status').textContent=e.message||'Druckliste konnte nicht erstellt werden.';
+  }
+}
+$('print').addEventListener('click',()=>{
+  updatePrintable();
+  const mobile=matchMedia('(pointer: coarse)').matches || matchMedia('(max-width: 700px)').matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if(mobile){openMobileSortedPrint();return;}
+  try{window.print();}catch(e){openMobileSortedPrint();}
+});
+window.addEventListener('pagehide',()=>{if(printPdfUrl)URL.revokeObjectURL(printPdfUrl)});
+
 
 // Unabhängige PDF-Erzeugung im Browser: kein Druckdialog der Webseite,
 // keine vom Browser hinzugefügten Kopf-/Fußzeilen und keine GitHub-Adresse.
@@ -338,7 +390,7 @@ let dark=false;try{let theme=JSON.parse(localStorage.getItem(THEME));dark=theme=
 function setTheme(v){dark=v;document.documentElement.dataset.theme=v?'dark':'light';$('theme-btn').textContent=v?'☀ Hell':'☾ Dunkel';try{localStorage.setItem(THEME,JSON.stringify(v?'dark':'light'))}catch(e){}}
 $('theme-btn').addEventListener('click',()=>setTheme(!dark));
 restoreLoaded();refreshFields();draw();save();setTheme(dark);
-if('serviceWorker' in navigator && location.protocol.startsWith('http'))window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js?v=2.4.0',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{});let refreshing=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload()}})});
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js?v=2.5.0',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{});let refreshing=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload()}})});
 })();
 </script>
 </body>

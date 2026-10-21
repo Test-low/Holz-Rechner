@@ -1,4 +1,4 @@
-HOLZOPTIX MOBIL – KUBIKMETER-SCHNELLERFASSUNG V2.4
+HOLZOPTIX MOBIL – KUBIKMETER-SCHNELLERFASSUNG V2.5
 
 GitHub Pages bleibt unverändert:
 https://test-low.github.io/Holz-Rechner/
@@ -9,7 +9,16 @@ des bestehenden GitHub-Repositories test-low/Holz-Rechner hochladen,
 vorhandene Dateien ersetzen und Commit changes wählen.
 Wenn noch die alte Fassung zu sehen ist: .../aktualisieren.html öffnen.
 
-NEU IN V2.4:
+NEU IN V2.5 – DRUCKEN AUF DEM HANDY:
+- „Sortiert drucken“ öffnet am Handy eine fertige, sortierte PDF.
+- Wenn der mobile Browser das Öffnen verhindert, erscheinen deutlich
+  sichtbare Links „PDF zum Drucken öffnen“ und „PDF speichern“.
+- Aus der PDF über das Menü „Drucken“ wählen. Auf dem PC bleibt der
+  normale Druckdialog bei „Sortiert drucken“ bestehen.
+- Logo, Produktname und GitHub-Adresse werden nicht in der PDF ausgegeben.
+- Alle bereits vorhandenen Funktionen und gespeicherten Listen bleiben.
+
+FUNKTIONEN AUS V2.4:
 1. Intelligente Schnelleingabe: Eingabe von z. B. 40 30 25 40x5 35x2.
    '40x5' bedeutet fünf Bohlen zu 40 cm Breite; 40 × 5 geht ebenfalls.
    Komma, Leerzeichen, Semikolon, Schrägstrich oder neue Zeile trennen.
