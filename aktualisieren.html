@@ -4,10 +4,10 @@
 <meta name="theme-color" content="#2f7d3a">
 <style>body{background:#f5f7f5;color:#1c2a20;font:16px system-ui,-apple-system,Segoe UI,sans-serif;display:grid;min-height:100vh;place-items:center;margin:0;padding:20px}main{background:white;max-width:520px;padding:30px;border:1px solid #dce6df;border-radius:18px;box-shadow:0 12px 28px #124b1710}h1{margin-top:0}button{background:#2f7d3a;color:white;padding:15px 20px;border:0;border-radius:10px;font-size:16px;cursor:pointer;width:100%}p{line-height:1.6}#status{font-weight:600;color:#24642d}small{color:#526457}</style>
 </head><body><main><h1>HolzOptiX aktualisieren</h1>
-<p>Wenn noch der alte Programmname erscheint, entferne hier den alten Offline-Cache. Gespeicherte Positionen und Einstellungen bleiben erhalten.</p>
+<p>Wenn nach einem Update noch die alte Version erscheint, entferne hier den alten Offline-Cache. Gespeicherte Bohlenlisten und Einstellungen bleiben erhalten.</p>
 <button type="button" id="refresh">Alte Version entfernen &amp; neu öffnen</button>
 <p id="status" role="status"></p>
-<small>Diese Funktion löscht nur den Seitencache und die Registrierung des Offline-Dienstes dieser Webseite, keine gespeicherten Positionen.</small>
+<small>Diese Funktion löscht nur den Seitencache und die Registrierung des Offline-Dienstes dieser Webseite, keine gespeicherten Bohlenlisten.</small>
 <script>
  document.getElementById('refresh').addEventListener('click', async function () {
   this.disabled=true;
@@ -24,7 +24,7 @@
     await Promise.all(keys.filter(k=>k.startsWith('holzwerk-m3-')||k.startsWith('holzoptix-m3-')).map(k=>caches.delete(k)));
    }
    status.textContent='Erledigt. Öffne die aktuelle Version …';
-   location.replace('./index.html?holzo-update=102');
-  }catch(e){status.textContent='Automatisch nicht möglich: '+e.message+' – bitte die Seite mit ?holzo-update=102 öffnen.';this.disabled=false;}
+   location.replace('./index.html?holzo-update=200');
+  }catch(e){status.textContent='Automatisch nicht möglich: '+e.message+' – bitte die Seite mit ?holzo-update=200 öffnen.';this.disabled=false;}
  });
 </script></main></body></html>

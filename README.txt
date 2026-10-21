@@ -1,37 +1,31 @@
-HolzOptiX Mobil – GitHub Pages – Version 1.0.2
-===============================================
+HOLZOPTIX MOBIL – KUBIKMETER-SCHNELLERFASSUNG V2
 
-WICHTIG: Es müssen die Dateien im HAUPTORDNER des bereits
-veröffentlichten GitHub-Repositories ersetzt werden.
-NICHT den Ordner dieser ZIP in das Repository laden.
+GitHub Pages aktualisieren:
+1. ZIP auf dem PC entpacken.
+2. Alle Dateien (index.html, sw.js, manifest.webmanifest,
+   aktualisieren.html, icons/) in das HAUPTVERZEICHNIS des
+   bestehenden GitHub-Pages-Repositories hochladen und alte ersetzen.
+3. Commit changes bestätigen.
+4. GitHub Pages auf dem Handy erneut öffnen.
+   Wenn die alte Version im Offline-Cache ist: /aktualisieren.html aufrufen.
 
-Upload:
-1) ZIP auf dem PC entpacken.
-2) GitHub -> das Repository -> Code -> Add file -> Upload files.
-3) Den INHALT des entpackten Ordners hochladen:
-   index.html
-   sw.js
-   manifest.webmanifest
-   aktualisieren.html
-   icons/icon-192.png und icons/icon-512.png
-   (den README musst du nicht hochladen)
-4) Wenn im Repository bereits eine index.html im Hauptverzeichnis liegt,
-   diese MIT DER NEUEN DATEI ERSETZEN, nicht in einem Unterordner ablegen.
-5) Commit changes. GitHub -> Settings -> Pages: main / (root).
-6) Wenn die alte Überschrift bleibt: die veröffentlichte Seitenadresse
-   direkt mit /aktualisieren.html öffnen, z. B.:
-   https://BENUTZER.github.io/REPOSITORY/aktualisieren.html
-   Dann den grünen Button antippen.
+Schnellerfassung:
+- Auftrag/Holzart einmal eintragen, z.B. Eiche Wurm
+- Je Längenreihe Länge in Metern und Stärke in mm eingeben
+- Breiten in Zentimetern einfach eintippen, z.B. 40, 30, 25, 30, 40, 40, 40
+- Breiten können mit Komma, Leerzeichen, / oder ; getrennt werden.
+- 40x3 entspricht drei Bohlen mit 40 cm Breite.
+- Breiten mit Dezimalstelle mit Punkt eingeben, z.B. 32.5
+- Für eine weitere Länge + Nächste Länge erfassen wählen.
+- Alternativ ganze Zeilen wie '4,50 x 40 / 30 / 25' einfügen.
+- Die Summen verändern sich sofort beim Tippen.
 
-Schnelltest ohne Löschen: /index.html?holzo-update=102 aufrufen.
-Wenn die URL noch den alten Namen zeigt, liegt die neue index.html NICHT
-am veröffentlichten GitHub-Pages-Speicherort.
+Die Daten bleiben lokal im Browser. Die App übernimmt bei der ersten
+Benutzung vorhandene Einzelpositionen der HolzOptiX- und älteren
+HolzWerk-Kubikmeter-Version. Die alten Daten werden NICHT gelöscht.
 
-Datensicherheit:
-- Die Aktualisierungsseite leert KEIN localStorage. Gespeicherte
-  Positionen und Theme bleiben auf dem selben Browser/URL vorhanden.
-- Bestehende Speicherkennungen werden zur Datenübernahme weiterhin erkannt.
-- NICHT Browser-Website-Daten/Storage manuell löschen; das kann
-  gespeicherte Positionen löschen.
+WICHTIG: Nicht auf unterschiedlichen Geräten dieselbe lokale Liste erwarten;
+für Übertragung JSON-Sicherung exportieren und importieren.
 
-Auf der neuen Seite steht oben HOLZOPTIX / MOBIL und unten Version 1.0.2.
+Wenn bei GitHub Pages die alten Daten nicht auftauchen, sicherstellen,
+dass die URL (Domain/Repository-Pfad) gleich geblieben ist.

@@ -1,450 +1,84 @@
 <!doctype html>
 <html lang="de">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#2f7d3a">
-  <meta name="description" content="Mobiler Kubikmeter-Rechner für Holz: Maße, Stückzahl, Einzelvolumen und Gesamtsumme.">
-  <meta name="color-scheme" content="light dark">
-  <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="icon" type="image/png" href="./icons/icon-192.png">
-  <link rel="apple-touch-icon" href="./icons/icon-192.png">
-  <title>HolzOptiX – Kubikmeter-Rechner</title>
-  <meta name="application-name" content="HolzOptiX Kubikmeter">
-  <style>
-    :root {
-      color-scheme: light;
-      --bg: #f5f7f5;
-      --surface: #ffffff;
-      --surface-alt: #f3f7f3;
-      --text: #1c2a20;
-      --muted: #617065;
-      --line: #e1e8e2;
-      --green: #2f7d3a;
-      --green-dark: #24642d;
-      --green-pale: #e9f4ea;
-      --danger: #b83939;
-      --shadow: 0 12px 35px rgba(17, 52, 25, .055);
-      --radius: 20px;
-    }
-    [data-theme="dark"] {
-      color-scheme: dark;
-      --bg: #111815;
-      --surface: #1b251e;
-      --surface-alt: #202e24;
-      --text: #edf7ef;
-      --muted: #a6b8a9;
-      --line: #354338;
-      --green: #72bf7c;
-      --green-dark: #98d5a0;
-      --green-pale: #233a29;
-      --danger: #ff9090;
-      --shadow: 0 12px 35px rgba(0, 0, 0, .15);
-    }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body { margin: 0; min-height: 100vh; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.45; }
-    button, input, select { font: inherit; }
-    button { cursor: pointer; touch-action: manipulation; }
-    button:disabled { cursor: not-allowed; opacity: .48; }
-    :focus-visible { outline: 3px solid var(--green); outline-offset: 2px; }
-    .shell { max-width: 1100px; margin: 0 auto; padding: 26px 20px 52px; }
-    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 35px; }
-    .identity { display: flex; align-items: center; gap: 11px; font-size: .78rem; font-weight: 800; letter-spacing: .12em; }
-    .brandmark { width: 37px; height: 37px; border-radius: 11px; background: #2f7d3a; color: white; display: grid; place-items: center; font-size: 19px; font-weight: 900; letter-spacing: -.05em; }
-    .theme-button { display: inline-flex; align-items: center; gap: 9px; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; color: var(--text); padding: 9px 14px; font-weight: 650; font-size: .85rem; }
-    .hero { margin-bottom: 25px; }
-    .eyebrow { color: var(--green); font-weight: 800; letter-spacing: .09em; font-size: .74rem; text-transform: uppercase; margin: 0 0 8px; }
-    h1 { font-size: clamp(2rem, 5vw, 2.9rem); line-height: 1.13; letter-spacing: -.045em; margin: 0 0 8px; }
-    .hero p:last-child { max-width: 620px; color: var(--muted); margin: 0; }
-    .dashboard { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); gap: 20px; align-items: start; }
-    .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; min-width: 0; }
-    .card-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-    h2 { font-size: 1.2rem; margin: 0; letter-spacing: -.025em; }
-    .hint { color: var(--muted); font-size: .82rem; }
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-    .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-    .field.wide { grid-column: 1 / -1; }
-    label { font-size: .88rem; font-weight: 680; }
-    .field input, .field select { min-height: 49px; width: 100%; border: 1px solid var(--line); border-radius: 11px; background: var(--surface); color: var(--text); padding: 10px 12px; min-width: 0; }
-    .field input::placeholder { color: var(--muted); opacity: .75; }
-    .field input:focus, .field select:focus { border-color: var(--green); outline: 2px solid transparent; box-shadow: 0 0 0 3px var(--green-pale); }
-    .measure-input { display: flex; gap: 7px; }
-    .measure-input input { flex: 1; width: 30px; }
-    .measure-input select { width: 77px; flex: none; padding: 10px 6px; text-align: center; }
-    .field-note { font-size: .75rem; color: var(--muted); }
-    .volume-preview { border: 1px solid var(--line); border-radius: 15px; background: var(--surface-alt); padding: 17px 18px; margin: 21px 0 17px; }
-    .preview-label { color: var(--muted); font-size: .84rem; font-weight: 650; }
-    .preview-value { font-size: clamp(1.8rem, 4vw, 2.45rem); font-weight: 820; font-variant-numeric: tabular-nums; letter-spacing: -.05em; color: var(--green); margin: 4px 0 5px; overflow-wrap: anywhere; }
-    .preview-secondary { font-size: .78rem; color: var(--muted); }
-    .actions { display: flex; gap: 9px; flex-wrap: wrap; }
-    .btn { border: 1px solid transparent; border-radius: 11px; min-height: 46px; padding: 11px 16px; font-weight: 730; font-size: .91rem; display: inline-flex; justify-content: center; align-items: center; gap: 8px; }
-    .btn-primary { background: #2f7d3a; color: white; flex: 1; }
-    .btn-primary:not(:disabled):hover { background: #24642d; }
-    .btn-secondary { background: var(--surface-alt); color: var(--text); border-color: var(--line); }
-    .btn-plain { border-color: var(--line); background: var(--surface); color: var(--text); }
-    .btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--line); }
-    .summary { background: linear-gradient(145deg, #2f7d3a, #205d2b); color: white; border: 0; padding: 25px; }
-    .summary h2 { color: #e8f3ea; font-size: .92rem; font-weight: 650; }
-    .total { font-size: clamp(2rem, 4vw, 2.7rem); font-weight: 850; letter-spacing: -.052em; line-height: 1.2; margin: 12px 0 20px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-    .summary-meta { border-top: 1px solid #ffffff3a; padding-top: 16px; display: flex; justify-content: space-between; gap: 12px; color: #eef9ef; font-size: .9rem; }
-    .summary-meta strong { font-weight: 800; }
-    .list-card { margin-top: 20px; }
-    .positions { display: flex; flex-direction: column; gap: 12px; }
-    .empty { text-align: center; border: 1px dashed var(--line); border-radius: 14px; padding: 32px 18px; background: var(--surface-alt); }
-    .empty-icon { font-size: 1.7rem; margin-bottom: 5px; color: var(--green); }
-    .empty strong { display: block; }
-    .empty p { color: var(--muted); font-size: .86rem; margin: 5px 0 0; }
-    .position { border: 1px solid var(--line); border-radius: 13px; padding: 13px 14px; }
-    .position-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-    .position-title { font-weight: 770; overflow-wrap: anywhere; }
-    .position-volume { font-weight: 820; font-variant-numeric: tabular-nums; color: var(--green); white-space: nowrap; }
-    .position-detail { color: var(--muted); font-size: .79rem; margin-top: 5px; overflow-wrap: anywhere; }
-    .position-actions { display: flex; gap: 15px; margin-top: 12px; }
-    .link-button { border: 0; background: transparent; padding: 4px 0; color: var(--green); font-size: .82rem; font-weight: 750; }
-    .link-button.delete { color: var(--danger); }
-    .list-tools { display: flex; gap: 9px; flex-wrap: wrap; padding-top: 17px; border-top: 1px solid var(--line); margin-top: 18px; }
-    .list-tools .btn { min-height: 40px; font-size: .8rem; padding: 9px 12px; }
-    .app-note { color: var(--muted); font-size: .78rem; margin: 20px 2px 0; }
-    #message { font-size: .83rem; min-height: 1.3em; color: var(--danger); margin: 7px 1px 0; }
-    @media (max-width: 740px) {
-      .shell { padding: 18px 15px 45px; }
-      .topbar { margin-bottom: 25px; }
-      .dashboard { grid-template-columns: 1fr; gap: 15px; }
-      .card { padding: 19px; border-radius: 17px; }
-      .list-card { margin-top: 15px; }
-      .summary { grid-row: 2; }
-      .form-grid { gap: 13px; }
-      .total { font-size: 2.25rem; }
-      .theme-button { padding: 8px 11px; }
-    }
-    @media (max-width: 390px) {
-      .shell { padding-left: 11px; padding-right: 11px; }
-      .card { padding: 15px; }
-      .form-grid { grid-template-columns: 1fr; }
-      .field.wide { grid-column: auto; }
-      .measure-input select { width: 82px; }
-      h1 { font-size: 2rem; }
-      .btn { width: 100%; }
-      .list-tools .btn { width: auto; flex: 1; }
-    }
-    @media print {
-      :root, [data-theme="dark"] { color-scheme: light; --surface: #fff; --text: #111; --muted: #444; --line: #bbb; --green: #111; --surface-alt: #fff; }
-      body { background: white; color: black; }
-      .shell { max-width: 100%; padding: 0; }
-      .topbar, #entry-card, .hero .eyebrow, .hero p:last-child, .list-tools, .position-actions, .app-note { display: none !important; }
-      .hero { margin-bottom: 12px; }
-      .hero h1 { font-size: 20pt; }
-      .dashboard { display: block; }
-      .summary { padding: 14px 0; background: #fff !important; color: black; box-shadow: none; }
-      .summary h2, .summary-meta { color: black; }
-      .total { font-size: 20pt; margin: 6px 0; }
-      .summary-meta { border-color: #aaa; }
-      .list-card { box-shadow: none; border: none; padding: 10px 0; margin-top: 10px; }
-      .position { break-inside: avoid; }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2f7d3a">
+<meta name="description" content="HolzOptiX Schnellerfassung: viele Bohlenbreiten je Länge eingeben und Kubikmeter direkt berechnen.">
+<meta name="application-name" content="HolzOptiX Kubikmeter">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/png" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<title>HolzOptiX – Kubikmeter-Schnellerfassung</title>
+<style>
+:root{color-scheme:light;--bg:#f3f5f2;--card:#fff;--card2:#f7faf6;--ink:#17281c;--muted:#637468;--line:#dce6dd;--primary:#2f7d3a;--primarydark:#22672f;--light:#e8f4e8;--error:#b73d38;--shadow:0 10px 35px #1c3d2010}
+[data-theme="dark"]{color-scheme:dark;--bg:#111a14;--card:#1b271e;--card2:#202e23;--ink:#eef7f0;--muted:#a2b4a6;--line:#384b3b;--primary:#74c47f;--primarydark:#91d49a;--light:#223a29;--error:#ff9a94;--shadow:0 10px 35px #0003}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;line-height:1.4}button,input,textarea{font:inherit}button{cursor:pointer;touch-action:manipulation}button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--primary);outline-offset:2px}a{color:var(--primary)}.wrap{max-width:950px;margin:auto;padding:16px 16px 48px}.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:21px}.brand{display:flex;align-items:center;gap:11px;min-width:0}.mark{width:44px;height:44px;border-radius:13px;background:#2f7d3a;color:white;display:grid;place-items:center;font-size:21px;font-weight:850;flex:none}.brand b{display:block;letter-spacing:.065em;font-size:17px}.brand small{display:block;color:var(--muted);font-size:11px;font-weight:650;letter-spacing:.03em}.mode{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;color:var(--ink);font-weight:680;white-space:nowrap}.hero h1{font-size:clamp(26px,4.4vw,37px);letter-spacing:-.045em;line-height:1.1;margin:0}.hero p{color:var(--muted);font-size:14px;margin:8px 0 18px}.summary{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:15px 19px;border-radius:17px;background:linear-gradient(120deg,#286f33,#194e29);box-shadow:0 8px 24px #23482b22;color:white;margin-bottom:17px}.summary-label{font-size:11px;letter-spacing:.09em;font-weight:780;color:#d5efda}.summary-number{display:block;font-size:clamp(28px,5vw,38px);font-weight:850;letter-spacing:-.04em;line-height:1.1;margin-top:3px;font-variant-numeric:tabular-nums}.summary-side{text-align:right;font-size:12px;white-space:nowrap;color:#e0f2e2}.summary-side b{font-size:22px;display:block;font-variant-numeric:tabular-nums}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:19px;margin-bottom:15px;box-shadow:var(--shadow)}.card-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:13px}.card h2{font-size:17px;letter-spacing:-.015em;margin:0}.sub{font-size:12px;color:var(--muted)}.settings{display:grid;grid-template-columns:minmax(0,1fr) 145px;gap:13px}.field{display:flex;flex-direction:column;gap:6px;min-width:0}.field label,.small-label{font-weight:690;font-size:12px;color:var(--muted)}.field input,.dim-input,.row-note,.widths,.import-text{width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:11px;padding:11px 12px;outline:none;min-height:47px}.field input:focus,.dim-input:focus,.row-note:focus,.widths:focus,.import-text:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--light)}.field input::placeholder,.dim-input::placeholder,.widths::placeholder,.row-note::placeholder{color:var(--muted);opacity:.8}.field input{font-size:16px}.note{margin:10px 0 0;color:var(--muted);font-size:12px}.row-top{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:0 0 10px}.row-index{font-size:12px;font-weight:800;background:var(--light);color:var(--primary);border-radius:8px;padding:5px 8px}.delete{border:1px solid var(--line);border-radius:9px;background:transparent;color:var(--error);padding:7px 10px;font-size:12px;font-weight:700}.dims{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.8fr);gap:10px}.dim-label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted);font-weight:680}.dim-wrap{position:relative}.dim-input{padding-right:40px;font-size:19px;font-weight:720;font-variant-numeric:tabular-nums}.suffix{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:12px;color:var(--muted);font-weight:700}.input-block{margin-top:12px}.input-block>label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:5px}.widths{resize:vertical;min-height:76px;font-size:18px;line-height:1.55;font-variant-numeric:tabular-nums;letter-spacing:.01em}.row-foot{margin-top:11px;border-top:1px solid var(--line);padding-top:11px;display:flex;align-items:center;justify-content:space-between;gap:8px}.row-foot small{color:var(--muted);font-size:12px}.row-foot strong{font-size:17px;font-variant-numeric:tabular-nums;color:var(--primary);white-space:nowrap}.invalid{font-size:12px;color:var(--error);margin-top:8px}.row-note{min-height:36px;padding:8px 10px;font-size:12px;margin-top:10px;background:var(--card2)}.btn{min-height:46px;border-radius:11px;font-weight:740;border:1px solid transparent;padding:11px 14px;color:var(--ink);background:var(--card2)}.btn-primary{background:#2f7d3a;color:white}.btn-secondary{border-color:var(--line)}.btn-danger{border-color:var(--line);background:transparent;color:var(--error)}.add{width:100%;border:2px dashed #a5c9a9;background:var(--light);color:var(--primary);min-height:57px;margin-bottom:16px;font-size:16px}.toolbar{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.toolbar .btn{font-size:13px}.preview{border-radius:12px;background:var(--card2);padding:12px;margin-top:13px;color:var(--muted);font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere}.import-text{width:100%;min-height:100px;resize:vertical;font-family:inherit;font-size:15px;line-height:1.6}.import-details summary{font-weight:750;cursor:pointer;font-size:15px}.import-details p{font-size:13px;color:var(--muted);margin:8px 0 12px}.import-details code{color:var(--ink)}.import-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:11px}.tiny{color:var(--muted);font-size:12px}.footer{margin-top:18px;font-size:12px;color:var(--muted);line-height:1.65}.status{font-size:13px;min-height:1em;margin:8px 0 0;color:var(--muted)}.empty-hint{font-size:12px;color:var(--muted);margin-top:-4px}.no-print{}
+@media(max-width:550px){.wrap{padding:13px 11px 36px}.top{margin-bottom:20px}.brand b{font-size:15px}.brand small{font-size:10px}.mark{width:40px;height:40px}.mode{font-size:12px;padding:10px}.card{border-radius:15px;padding:14px}.hero p{font-size:13px}.summary{padding:13px 14px;border-radius:14px}.summary-number{font-size:30px}.settings{grid-template-columns:minmax(0,1fr) 108px}.toolbar{grid-template-columns:1fr 1fr}.toolbar .btn:last-child{grid-column:1/-1}.row-foot strong{font-size:16px}}
+@media(max-width:350px){.brand b{font-size:13px}.summary-number{font-size:26px}.settings{grid-template-columns:1fr 95px}.dim-input{font-size:17px}.row-foot{flex-wrap:wrap}}
+@media print{body{background:white;color:#111}.wrap{max-width:none;padding:0}.top,.hero p,.mode,.no-print,.delete,.add,.toolbar,.import-details,.footer,.row-note::placeholder{display:none!important}.summary{position:static;background:white;color:#111;box-shadow:none;border:1px solid #bbb;padding:10px;margin-bottom:12px}.summary-label,.summary-side{color:#111}.card{box-shadow:none;border-color:#bbb;break-inside:avoid;padding:12px}.widths,.dim-input,.field input,.row-note{border:0;padding:0;color:#111;box-shadow:none!important;resize:none;min-height:0}.widths{font-size:12pt;min-height:0;overflow:visible}.hero h1{font-size:18pt}.row-foot strong{color:#111}.settings{grid-template-columns:1fr 100px}.card h2{font-size:13pt}}
+</style>
 </head>
 <body>
-  <main class="shell">
-    <header class="topbar">
-      <div class="identity"><span class="brandmark" aria-hidden="true">m³</span><span>HOLZOPTIX <span style="color:var(--green)">/</span> MOBIL</span></div>
-      <button id="theme-toggle" class="theme-button" type="button" aria-label="Darstellung wechseln">☾ <span id="theme-label">Dunkel</span></button>
-    </header>
-
-    <section class="hero">
-      <p class="eyebrow">Holz · Volumenberechnung</p>
-      <h1>Kubikmeter-Rechner</h1>
-      <p>Stärke, Breite und Länge eingeben. Das Volumen wird sofort berechnet – auch für mehrere Holzpositionen.</p>
-    </section>
-
-    <div class="dashboard">
-      <section class="card" id="entry-card" aria-labelledby="entry-title">
-        <div class="card-head"><h2 id="entry-title">Maße eingeben</h2><span class="hint">Alle Maße frei wählbar</span></div>
-        <form id="entry-form" autocomplete="off" novalidate>
-          <div class="form-grid">
-            <div class="field wide">
-              <label for="description">Bezeichnung <span class="hint">(optional)</span></label>
-              <input id="description" type="text" maxlength="90" placeholder="z. B. KVH Fichte">
-            </div>
-            <div class="field">
-              <label for="thickness">Stärke / Höhe</label>
-              <div class="measure-input">
-                <input id="thickness" type="text" inputmode="decimal" placeholder="z. B. 60" aria-describedby="input-hint">
-                <select id="thickness-unit" aria-label="Einheit der Stärke"><option value="mm">mm</option><option value="cm">cm</option><option value="m">m</option></select>
-              </div>
-            </div>
-            <div class="field">
-              <label for="width">Breite</label>
-              <div class="measure-input">
-                <input id="width" type="text" inputmode="decimal" placeholder="z. B. 120">
-                <select id="width-unit" aria-label="Einheit der Breite"><option value="mm">mm</option><option value="cm">cm</option><option value="m">m</option></select>
-              </div>
-            </div>
-            <div class="field">
-              <label for="length">Länge</label>
-              <div class="measure-input">
-                <input id="length" type="text" inputmode="decimal" placeholder="z. B. 4,5">
-                <select id="length-unit" aria-label="Einheit der Länge"><option value="m">m</option><option value="cm">cm</option><option value="mm">mm</option></select>
-              </div>
-            </div>
-            <div class="field">
-              <label for="quantity">Stückzahl</label>
-              <input id="quantity" type="number" inputmode="numeric" min="1" step="1" value="1">
-            </div>
-          </div>
-          <p class="field-note" id="input-hint">Dezimalzahlen mit Komma oder Punkt möglich, z. B. 4,5.</p>
-          <div class="volume-preview" aria-live="polite" aria-atomic="true">
-            <div class="preview-label">Volumen dieser Position</div>
-            <div class="preview-value" id="current-volume">0,0000 m³</div>
-            <div class="preview-secondary" id="single-volume">Maße eingeben, um zu berechnen</div>
-          </div>
-          <div class="actions">
-            <button id="add-button" type="submit" class="btn btn-primary" disabled>+ Position hinzufügen</button>
-            <button id="reset-button" type="button" class="btn btn-secondary">Zurücksetzen</button>
-          </div>
-          <p id="message" role="status" aria-live="polite"></p>
-        </form>
-      </section>
-
-      <div>
-        <section class="card summary" aria-label="Gesamtergebnis">
-          <h2>GESAMTVOLUMEN</h2>
-          <div class="total" id="grand-total" aria-live="polite">0,0000 m³</div>
-          <div class="summary-meta"><span>Positionen <strong id="position-count">0</strong></span><span>Holzteile <strong id="piece-count">0</strong></span></div>
-        </section>
-        <section class="card list-card" aria-labelledby="list-title">
-          <div class="card-head"><h2 id="list-title">Meine Positionen</h2><span class="hint" id="list-hint">Noch keine Positionen</span></div>
-          <div id="positions" class="positions"></div>
-          <div class="list-tools">
-            <button id="export-button" type="button" class="btn btn-plain" disabled>CSV exportieren</button>
-            <button id="print-button" type="button" class="btn btn-plain" disabled>Drucken / PDF</button>
-            <button id="clear-button" type="button" class="btn btn-danger" disabled>Liste leeren</button>
-          </div>
-        </section>
-      </div>
-    </div>
-    <p class="app-note">Die Positionen bleiben auf diesem Gerät im Browser gespeichert. Die Berechnung funktioniert auch ohne Internet. Für eine dauerhafte Nutzung kannst du die Seite zum Startbildschirm hinzufügen.</p>
-    <p style="font-size:.72rem;color:var(--muted);margin-top:22px">HolzOptiX Mobil · Version 1.0.2 · <a href="./aktualisieren.html" style="color:inherit">Anzeige aktualisieren</a></p>
-  </main>
-  <script>
-  (() => {
-    'use strict';
-    const STORAGE_KEY = 'holzoptix-m3-positionen-v1';
-    const THEME_KEY = 'holzoptix-m3-theme-v1';
-    const OLD_STORAGE_KEY = 'holzwerk-m3-positionen-v1';
-    const OLD_THEME_KEY = 'holzwerk-m3-theme-v1';
-    const factors = { mm: 0.001, cm: 0.01, m: 1 };
-    const get = id => document.getElementById(id);
-    const fields = ['description', 'thickness', 'thickness-unit', 'width', 'width-unit', 'length', 'length-unit', 'quantity'];
-    const form = get('entry-form');
-    let positions = [];
-    let editingId = null;
-    const store = (key, value) => { try { localStorage.setItem(key, JSON.stringify(value)); } catch (_) {} };
-    const load = key => { try { return JSON.parse(localStorage.getItem(key)); } catch (_) { return null; } };
-    const decimal = text => {
-      const input = String(text ?? '').trim().replace(/\s/g, '').replace(',', '.');
-      if (!/^(?:\d+(?:\.\d*)?|\.\d+)$/.test(input)) return NaN;
-      const n = Number(input);
-      return Number.isFinite(n) && n > 0 ? n : NaN;
-    };
-    const formatVolume = value => {
-      if (!value) return '0,0000';
-      const decimals = Math.min(9, Math.max(4, Math.ceil(-Math.log10(value)) + 2));
-      return new Intl.NumberFormat('de-DE', { minimumFractionDigits: 4, maximumFractionDigits: decimals }).format(value);
-    };
-    const formatInput = v => new Intl.NumberFormat('de-DE', { maximumFractionDigits: 6 }).format(v);
-    const safeQuantity = value => Number.isSafeInteger(value) && value > 0 && value <= 10000000;
-    const readInput = () => {
-      const thickness = decimal(get('thickness').value);
-      const width = decimal(get('width').value);
-      const length = decimal(get('length').value);
-      const quantity = Number(get('quantity').value);
-      if (![thickness, width, length].every(Number.isFinite) || !safeQuantity(quantity)) return null;
-      const data = {
-        description: get('description').value.trim(), thickness, width, length, quantity,
-        thicknessUnit: get('thickness-unit').value,
-        widthUnit: get('width-unit').value,
-        lengthUnit: get('length-unit').value
-      };
-      const volumePerPiece = thickness * factors[data.thicknessUnit] * width * factors[data.widthUnit] * length * factors[data.lengthUnit];
-      const volume = volumePerPiece * quantity;
-      if (!Number.isFinite(volume) || volume <= 0) return null;
-      return { ...data, volumePerPiece, volume };
-    };
-    const refreshPreview = () => {
-      const data = readInput();
-      get('add-button').disabled = !data;
-      get('current-volume').textContent = `${formatVolume(data?.volume || 0)} m³`;
-      get('single-volume').textContent = data
-        ? `${formatVolume(data.volumePerPiece)} m³ je Stück × ${formatInput(data.quantity)} Stück`
-        : 'Maße eingeben, um zu berechnen';
-      get('message').textContent = '';
-    };
-    const cleanEntry = item => {
-      if (!item || typeof item !== 'object') return null;
-      const dimensions = ['thickness', 'width', 'length'].every(k => typeof item[k] === 'number' && Number.isFinite(item[k]) && item[k] > 0);
-      const units = ['thicknessUnit', 'widthUnit', 'lengthUnit'].every(k => Object.prototype.hasOwnProperty.call(factors, item[k]));
-      if (!dimensions || !units || !safeQuantity(item.quantity)) return null;
-      const volumePerPiece = item.thickness * factors[item.thicknessUnit] * item.width * factors[item.widthUnit] * item.length * factors[item.lengthUnit];
-      const volume = volumePerPiece * item.quantity;
-      if (!Number.isFinite(volume) || volume <= 0) return null;
-      return {
-        id: typeof item.id === 'string' ? item.id : `${Date.now()}-${Math.random()}`,
-        description: typeof item.description === 'string' ? item.description.slice(0,90) : '',
-        thickness: item.thickness, width: item.width, length: item.length,
-        quantity: item.quantity, thicknessUnit: item.thicknessUnit,
-        widthUnit: item.widthUnit, lengthUnit: item.lengthUnit,
-        volumePerPiece, volume
-      };
-    };
-    const button = (text, className, onClick, ariaLabel) => {
-      const b = document.createElement('button');
-      b.type = 'button'; b.className = className; b.textContent = text;
-      if (ariaLabel) b.setAttribute('aria-label', ariaLabel);
-      b.addEventListener('click', onClick);
-      return b;
-    };
-    const render = () => {
-      const container = get('positions');
-      container.replaceChildren();
-      if (positions.length === 0) {
-        const empty = document.createElement('div'); empty.className = 'empty';
-        const icon = document.createElement('div'); icon.className = 'empty-icon'; icon.textContent = 'm³';
-        const strong = document.createElement('strong'); strong.textContent = 'Deine Liste ist noch leer';
-        const p = document.createElement('p'); p.textContent = 'Berechne oben deine erste Holzposition und füge sie hinzu.';
-        empty.append(icon, strong, p); container.append(empty);
-      }
-      positions.forEach((item, idx) => {
-        const box = document.createElement('article'); box.className = 'position';
-        const top = document.createElement('div'); top.className = 'position-top';
-        const title = document.createElement('div'); title.className = 'position-title';
-        title.textContent = item.description || `Position ${idx+1}`;
-        const volume = document.createElement('div'); volume.className = 'position-volume';
-        volume.textContent = `${formatVolume(item.volume)} m³`;
-        top.append(title, volume);
-        const details = document.createElement('div'); details.className = 'position-detail';
-        details.textContent = `${formatInput(item.thickness)} ${item.thicknessUnit} × ${formatInput(item.width)} ${item.widthUnit} × ${formatInput(item.length)} ${item.lengthUnit} · ${formatInput(item.quantity)} Stück`;
-        const actions = document.createElement('div'); actions.className = 'position-actions';
-        actions.append(
-          button('Bearbeiten', 'link-button', () => editItem(item.id), `Position ${idx+1} bearbeiten`),
-          button('Löschen', 'link-button delete', () => deleteItem(item.id), `Position ${idx+1} löschen`)
-        );
-        box.append(top, details, actions); container.append(box);
-      });
-      const total = positions.reduce((s, p) => s + p.volume, 0);
-      const qty = positions.reduce((s, p) => s + p.quantity, 0);
-      get('grand-total').textContent = `${formatVolume(total)} m³`;
-      get('position-count').textContent = new Intl.NumberFormat('de-DE').format(positions.length);
-      get('piece-count').textContent = new Intl.NumberFormat('de-DE').format(qty);
-      get('list-hint').textContent = positions.length ? `${positions.length} gespeichert` : 'Noch keine Positionen';
-      ['export-button', 'print-button', 'clear-button'].forEach(id => get(id).disabled = !positions.length);
-      store(STORAGE_KEY, positions);
-    };
-    const resetForm = () => {
-      editingId = null;
-      form.reset();
-      get('entry-title').textContent = 'Maße eingeben';
-      get('add-button').textContent = '+ Position hinzufügen';
-      refreshPreview();
-    };
-    const editItem = id => {
-      const item = positions.find(p => p.id === id);
-      if (!item) return;
-      editingId = id;
-      fields.forEach(key => {
-        const dataKey = key.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
-        const value = item[dataKey];
-        get(key).value = typeof value === 'number' ? String(value).replace('.', ',') : value;
-      });
-      get('entry-title').textContent = 'Position bearbeiten';
-      get('add-button').textContent = 'Änderungen speichern';
-      refreshPreview();
-      get('entry-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    };
-    const deleteItem = id => {
-      positions = positions.filter(p => p.id !== id);
-      if (editingId === id) resetForm();
-      render();
-    };
-    form.addEventListener('submit', event => {
-      event.preventDefault();
-      const data = readInput();
-      if (!data) {
-        get('message').textContent = 'Bitte gültige Maße und eine ganze Stückzahl größer 0 eingeben.';
-        return;
-      }
-      if (editingId) {
-        const index = positions.findIndex(p => p.id === editingId);
-        if (index >= 0) positions[index] = { ...data, id: editingId };
-      } else {
-        positions.push({ ...data, id: `${Date.now()}-${Math.random().toString(36).slice(2)}` });
-      }
-      resetForm();
-      render();
-    });
-    fields.forEach(id => {
-      get(id).addEventListener('input', refreshPreview);
-      get(id).addEventListener('change', refreshPreview);
-    });
-    get('reset-button').addEventListener('click', resetForm);
-    get('clear-button').addEventListener('click', () => {
-      if (positions.length && window.confirm('Wirklich alle Positionen aus dieser Liste löschen?')) {
-        positions = []; resetForm(); render();
-      }
-    });
-    get('print-button').addEventListener('click', () => window.print());
-    get('export-button').addEventListener('click', () => {
-      if (!positions.length) return;
-      const csvCell = value => {
-        let text = String(value ?? '');
-        if (/^[\s]*[=+@\-]/.test(text)) text = "'" + text;
-        return '"' + text.replace(/"/g, '""') + '"';
-      };
-      const decimalCSV = n => n.toFixed(9).replace('.', ',');
-      const lines = [['Pos.', 'Bezeichnung', 'Stärke', 'Einheit Stärke', 'Breite', 'Einheit Breite', 'Länge', 'Einheit Länge', 'Stück', 'm³ je Stück', 'm³ gesamt']];
-      positions.forEach((p, i) => lines.push([i+1, p.description || `Position ${i+1}`, p.thickness, p.thicknessUnit, p.width, p.widthUnit, p.length, p.lengthUnit, p.quantity, decimalCSV(p.volumePerPiece), decimalCSV(p.volume)]));
-      lines.push(['', 'SUMME', '', '', '', '', '', '', positions.reduce((n,p) => n + p.quantity, 0), '', decimalCSV(positions.reduce((n,p) => n + p.volume, 0))]);
-      const csv = '\ufeff' + lines.map(line => line.map(csvCell).join(';')).join('\r\n');
-      const blob = new Blob([csv], {type: 'text/csv;charset=utf-8'});
-      const href = URL.createObjectURL(blob);
-      const a = document.createElement('a'); a.href = href; a.download = 'kubikmeter-liste.csv';
-      document.body.append(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(href), 1000);
-    });
-    const setTheme = value => {
-      document.documentElement.setAttribute('data-theme', value);
-      get('theme-label').textContent = value === 'dark' ? 'Hell' : 'Dunkel';
-      get('theme-toggle').firstChild.textContent = value === 'dark' ? '☀ ' : '☾ ';
-      store(THEME_KEY, value);
-    };
-    get('theme-toggle').addEventListener('click', () => setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
-    // Bei einem Update vorhandene Positionen und das Farbschema uebernehmen.
-    try {
-      if (localStorage.getItem(STORAGE_KEY) === null) {
-        const old = load(OLD_STORAGE_KEY);
-        if (Array.isArray(old)) store(STORAGE_KEY, old);
-      }
-      if (localStorage.getItem(THEME_KEY) === null) {
-        const old = load(OLD_THEME_KEY);
-        if (old === 'dark' || old === 'light') store(THEME_KEY, old);
-      }
-    } catch (_) {}
-    const saved = load(STORAGE_KEY);
-    if (Array.isArray(saved)) positions = saved.slice(0, 3000).map(cleanEntry).filter(Boolean);
-    setTheme(load(THEME_KEY) === 'dark' ? 'dark' : 'light');
-    refreshPreview();
-    render();
-    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js?v=1.0.2', { updateViaCache: 'none' }).then(reg => reg.update()).catch(() => {});
-        let refreshing = false;
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-          if (!refreshing) { refreshing = true; window.location.reload(); }
-        });
-      });
-    }
-  })();
-  </script>
+<div class="wrap">
+<header class="top"><div class="brand"><div class="mark" aria-hidden="true">m³</div><div><b>HolzOptiX <span style="color:var(--primary)">/</span> MOBIL</b><small>KUBIKMETER · SCHNELLERFASSUNG</small></div></div><button id="theme-btn" class="mode" type="button">☾ Dunkel</button></header>
+<section class="hero"><h1>Viele Bohlen. Eine Eingabe.</h1><p>Eine Länge eingeben, alle Breiten hintereinander schreiben. Die Kubikmeter werden direkt zusammengerechnet.</p></section>
+<section class="summary" aria-label="Gesamtergebnis"><div><div class="summary-label">GESAMTVOLUMEN</div><span class="summary-number" id="sum-volume" aria-live="polite">0,0000 m³</span></div><div class="summary-side"><b id="sum-pieces">0</b> Bohlen<br><span id="sum-lines">0 Längen</span></div></section>
+<section class="card"><div class="card-head"><h2>Auftrag / Holzart</h2><span class="sub">Einmal ausfüllen</span></div><div class="settings"><div class="field"><label for="project">Bezeichnung</label><input id="project" type="text" maxlength="120" placeholder="z. B. Eiche Wurm" autocomplete="off"></div><div class="field"><label for="default-thick">Stärke (mm)</label><input id="default-thick" inputmode="decimal" type="text" value="40" placeholder="40" autocomplete="off"></div></div><p class="note">Die Stärke wird bei jeder neuen Längenreihe übernommen und kann dort geändert werden.</p></section>
+<div class="card-head" style="margin:20px 2px 12px"><h2>Längen und Bohlenbreiten</h2><span class="sub">Automatisch gespeichert</span></div>
+<div id="entries"></div>
+<button id="add-row" class="btn add no-print" type="button">+ Nächste Länge erfassen</button>
+<section class="card import-details no-print"><details id="bulk-details"><summary>Komplette handschriftliche Liste auf einmal eingeben</summary><p>Eine Zeile je Länge, dahinter die Breiten mit <code>/</code>, Komma oder Leerzeichen trennen. Beispiel:</p><textarea id="bulk-input" class="import-text" placeholder="4,50 x 40 / 30 / 25 / 30 / 40 / 40 / 40&#10;4,00 x 30 / 35 / 38 / 70&#10;3,35 x 70 / 40 / 40 / 20 / 20 / 20" spellcheck="false"></textarea><div class="import-controls"><button class="btn btn-primary" id="bulk-add" type="button">Zeilen übernehmen</button><span class="tiny" id="bulk-message" role="status"></span></div></details></section>
+<section class="card no-print"><div class="card-head"><h2>Ergebnis sichern</h2><span class="sub">Für Büro und Baustelle</span></div><div class="toolbar"><button class="btn btn-secondary" id="csv" type="button">CSV exportieren</button><button class="btn btn-secondary" id="print" type="button">Drucken / PDF</button><button class="btn btn-secondary" id="backup" type="button">Sicherung (JSON)</button><button class="btn btn-secondary" id="restore" type="button">Sicherung öffnen</button><button class="btn btn-danger" id="clear" type="button">Neue Liste beginnen</button></div><input id="restore-file" type="file" accept=".json,application/json" hidden><p class="status" id="status" role="status"></p></section>
+<p class="footer">Breiten standardmäßig in <b>cm</b>, Längen in <b>m</b>, Stärke in <b>mm</b>. Beispielsweise bedeutet „40, 30, 25“ drei Bohlen. <b>40x3</b> erfasst drei gleich breite Bohlen. Für Breiten mit Nachkommastelle einen Punkt verwenden (z. B. 32.5). Änderungen werden nur auf diesem Gerät im Browser gespeichert. Bestehende Daten der vorherigen Version werden beim ersten Öffnen übernommen; deren Originalspeicher bleibt unangetastet.<br>HolzOptiX Mobil · Version 2.0 · <a href="./aktualisieren.html">Offline-Version aktualisieren</a></p>
+</div>
+<template id="entry-template"><article class="card entry"><div class="row-top"><span class="row-index">LÄNGE 01</span><button type="button" class="delete no-print" aria-label="Längenreihe löschen">Entfernen</button></div><div class="dims"><label class="dim-label">Länge<div class="dim-wrap"><input class="dim-input length" type="text" inputmode="decimal" placeholder="4,50" autocomplete="off"><span class="suffix">m</span></div></label><label class="dim-label">Stärke<div class="dim-wrap"><input class="dim-input thick" type="text" inputmode="decimal" placeholder="40" autocomplete="off"><span class="suffix">mm</span></div></label></div><div class="input-block"><label>Bohlenbreiten (cm) – einfach hintereinander</label><textarea class="widths" rows="2" inputmode="decimal" placeholder="40, 30, 25, 30, 40, 40, 40" spellcheck="false"></textarea></div><div class="invalid" hidden></div><div class="row-foot"><small class="count">0 Bohlen</small><strong class="volume">0,0000 m³</strong></div><input class="row-note no-print" type="text" maxlength="90" placeholder="Notiz für diese Länge (optional)" autocomplete="off"></article></template>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id);
+const KEY='holzoptix-m3-schnellerfassung-v2', THEME='holzoptix-m3-theme-v1';
+let state={version:2,project:'',defaultThick:'40',rows:[]};
+const num=raw=>{const s=String(raw??'').trim().replace(',','.');return /^(?:\d+(?:\.\d*)?|\.\d+)$/.test(s)&&Number(s)>0&&Number.isFinite(Number(s))?Number(s):null};
+const fmtN=n=>new Intl.NumberFormat('de-DE',{maximumFractionDigits:3}).format(n);
+const fmtV=n=>new Intl.NumberFormat('de-DE',{minimumFractionDigits:4,maximumFractionDigits:6}).format(n);
+const id=()=>String(Date.now())+'-'+Math.random().toString(36).slice(2);
+const cap=(n,min,max)=>Number.isFinite(n)&&n>=min&&n<=max;
+function parseWidths(str){let values=[],bad=[];const parts=String(str||'').trim().split(/[\s,;\/]+/).filter(Boolean);for(const p of parts){const m=p.match(/^(\d+(?:\.\d+)?)(?:[x×*](\d+))?$/i);if(!m){bad.push(p);continue}const width=Number(m[1]),qty=m[2]?Number(m[2]):1;if(!cap(width,.001,10000)||!Number.isSafeInteger(qty)||qty<1||qty>10000||values.length+qty>20000){bad.push(p);continue}for(let i=0;i<qty;i++)values.push(width)}return {values,bad}}
+function calc(r){const len=num(r.length),thick=num(r.thick),w=parseWidths(r.widths);const errors=[...w.bad];if(String(r.length).trim()&&(!len||!cap(len,.001,1000)))errors.unshift('ungültige Länge');if(String(r.thick).trim()&&(!thick||!cap(thick,.001,10000)))errors.unshift('ungültige Stärke');let volume=0;if(len&&thick&&cap(len,.001,1000)&&cap(thick,.001,10000))for(const width of w.values)volume+=(len*thick*width)/100000;return {volume,count:(len&&thick&&cap(len,.001,1000)&&cap(thick,.001,10000))?w.values.length:0,errors,widths:w.values};}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){$('status').textContent='Speichern im Browser nicht möglich. Bitte eine JSON-Sicherung erstellen.'}}
+function cleanRow(r){if(!r||typeof r!=='object')return null;return {id:typeof r.id==='string'?r.id:id(),length:String(r.length??'').slice(0,20),thick:String(r.thick??'40').slice(0,20),widths:String(r.widths??'').slice(0,25000),note:String(r.note??'').slice(0,90)}}
+function restoreLoaded(){let loaded=null;try{loaded=JSON.parse(localStorage.getItem(KEY))}catch(e){}if(loaded&&loaded.version===2&&Array.isArray(loaded.rows)){state={version:2,project:String(loaded.project||'').slice(0,120),defaultThick:String(loaded.defaultThick||'40').slice(0,20),rows:loaded.rows.slice(0,1000).map(cleanRow).filter(Boolean)};return}
+// Altbestände der vorigen App nur kopieren, niemals löschen oder überschreiben.
+for(const key of ['holzoptix-m3-positionen-v1','holzwerk-m3-positionen-v1']){let old=null;try{old=JSON.parse(localStorage.getItem(key))}catch(e){}if(!Array.isArray(old)||!old.length)continue;const unit={mm:.001,cm:.01,m:1};let migrated=[];for(const p of old){if(!p||![p.thickness,p.width,p.length].every(x=>typeof x==='number'&&Number.isFinite(x)&&x>0))continue;if(![p.thicknessUnit,p.widthUnit,p.lengthUnit].every(u=>Object.prototype.hasOwnProperty.call(unit,u)))continue;let quantity=Number.isSafeInteger(p.quantity)&&p.quantity>0?p.quantity:1;const widthCm=p.width*unit[p.widthUnit]*100;const lenM=p.length*unit[p.lengthUnit],thickMM=p.thickness*unit[p.thicknessUnit]*1000;if(!cap(lenM,.001,1000)||!cap(thickMM,.001,10000)||!cap(widthCm,.001,10000))continue;migrated.push({id:id(),length:String(Number(lenM.toFixed(7))).replace('.',','),thick:String(Number(thickMM.toFixed(5))).replace('.',','),widths:fmtDecimal(widthCm)+(quantity>1?'x'+Math.min(quantity,10000):''),note:String(p.description||'').slice(0,90)})}if(migrated.length){state.rows=migrated;state.defaultThick=migrated[0].thick;state.project='Übernommene Positionen';break}}}
+function fmtDecimal(v){return Number(v.toFixed(7)).toString()}
+const entryNodes=new Map();
+function renderSummary(){let total=0,pieces=0,active=0;for(const r of state.rows){const c=calc(r);total+=c.volume;pieces+=c.count;if(c.count)active++} $('sum-volume').textContent=fmtV(total)+' m³';$('sum-pieces').textContent=fmtN(pieces);$('sum-lines').textContent=fmtN(active)+' Längen';}
+function renderRowTotals(r,el){const c=calc(r);el.querySelector('.count').textContent=fmtN(c.count)+' '+(c.count===1?'Bohle':'Bohlen');el.querySelector('.volume').textContent=fmtV(c.volume)+' m³';const error=el.querySelector('.invalid');if(c.errors.length){error.hidden=false;error.textContent='Bitte prüfen: '+c.errors.slice(0,4).join(', ')+(c.errors.length>4?' …':'')+'. Ungültige Werte werden nicht berechnet.'}else{error.hidden=true;error.textContent=''} }
+function mount(r){let el=$('entry-template').content.firstElementChild.cloneNode(true);entryNodes.set(r.id,el);el.dataset.id=r.id;el.querySelector('.length').value=r.length;el.querySelector('.thick').value=r.thick;el.querySelector('.widths').value=r.widths;el.querySelector('.row-note').value=r.note;for(const [cls,key] of [['length','length'],['thick','thick'],['widths','widths'],['row-note','note']]){el.querySelector('.'+cls).addEventListener('input',e=>{r[key]=e.target.value;renderRowTotals(r,el);renderSummary();save()})}el.querySelector('.delete').addEventListener('click',()=>{if(state.rows.length===1){r.length='';r.widths='';r.note='';el.querySelector('.length').value='';el.querySelector('.widths').value='';el.querySelector('.row-note').value='';renderRowTotals(r,el);renderSummary();save();return}state.rows=state.rows.filter(v=>v.id!==r.id);el.remove();entryNodes.delete(r.id);renumber();renderSummary();save()});renderRowTotals(r,el);return el}
+function renumber(){state.rows.forEach((r,i)=>{const el=entryNodes.get(r.id);if(el)el.querySelector('.row-index').textContent='LÄNGE '+String(i+1).padStart(2,'0')})}
+function draw(){entryNodes.clear();$('entries').replaceChildren();if(!state.rows.length)state.rows.push({id:id(),length:'',thick:state.defaultThick,widths:'',note:''});for(const r of state.rows)$('entries').append(mount(r));renumber();renderSummary()}
+function addRow(length='',widths='',thick=state.defaultThick,note='',focus=true){if(state.rows.length>=1000){$('status').textContent='Maximal 1000 Längenreihen.';return}const r={id:id(),length,thick,widths,note};state.rows.push(r);const el=mount(r);$('entries').append(el);renumber();renderSummary();save();if(focus){el.querySelector('.length').focus();el.scrollIntoView({behavior:'smooth',block:'center'})}return r}
+function refreshFields(){$('project').value=state.project;$('default-thick').value=state.defaultThick}
+$('add-row').addEventListener('click',()=>addRow());
+$('project').addEventListener('input',e=>{state.project=e.target.value;save()});
+$('default-thick').addEventListener('input',e=>{state.defaultThick=e.target.value;save()});
+$('bulk-add').addEventListener('click',()=>{const lines=$('bulk-input').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);let parsed=[],errors=[];for(let i=0;i<lines.length;i++){const m=lines[i].match(/^(\d+(?:[,.]\d+)?)\s*(?:m)?\s*[x×*]\s*(.+)$/i);if(!m||!num(m[1])||!parseWidths(m[2]).values.length||parseWidths(m[2]).bad.length){errors.push(i+1);continue}parsed.push({len:m[1],widths:m[2]})}if(errors.length){$('bulk-message').textContent='Zeile(n) '+errors.join(', ')+' prüfen – nichts übernommen.';return}if(!parsed.length){$('bulk-message').textContent='Bitte zuerst eine Liste eingeben.';return}if(parsed.length+state.rows.length>1000){$('bulk-message').textContent='Zu viele Längenreihen.';return}if(state.rows.length===1&&!state.rows[0].length.trim()&&!state.rows[0].widths.trim()){state.rows=[];entryNodes.clear();$('entries').replaceChildren()}for(const p of parsed)addRow(p.len,p.widths,state.defaultThick,'',false);$('bulk-input').value='';$('bulk-message').textContent=fmtN(parsed.length)+' Längen übernommen.';renderSummary();save()});
+function liveRows(){return state.rows.filter(r=>calc(r).count>0)}
+function csvCell(x){let text=String(x??'');if(/^[\s]*[=+@\-]/.test(text))text="'"+text;return '"'+text.replace(/"/g,'""')+'"'}
+function download(text,filename,type){const blob=new Blob([text],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)}
+function filename(suffix){const name=(state.project.trim()||'HolzOptiX-Kubikmeter').replace(/[^a-zA-Z0-9äöüÄÖÜß\-_ ]/g,'').trim().replace(/\s+/g,'-').slice(0,45)||'HolzOptiX-Kubikmeter';return name+'-'+suffix}
+$('csv').addEventListener('click',()=>{const rows=liveRows();if(!rows.length){$('status').textContent='Keine gültigen Bohlen zum Exportieren.';return}const lines=[['Auftrag','Länge (m)','Stärke (mm)','Breite (cm)','Stück','Volumen (m³)','Notiz']];let sum=0,qty=0;for(const r of rows){const c=calc(r),length=num(r.length),thick=num(r.thick);for(const w of c.widths){const v=length*thick*w/100000;lines.push([state.project,length.toFixed(4).replace('.',','),thick.toFixed(3).replace('.',','),w.toFixed(3).replace('.',','),1,v.toFixed(6).replace('.',','),r.note]);sum+=v;qty++}}lines.push(['SUMME','','','',qty,sum.toFixed(6).replace('.',','),'']);download('\ufeff'+lines.map(a=>a.map(csvCell).join(';')).join('\r\n'),filename('Bohlenliste.csv'),'text/csv;charset=utf-8');$('status').textContent='CSV wurde erstellt.'});
+$('print').addEventListener('click',()=>window.print());
+$('backup').addEventListener('click',()=>{download(JSON.stringify({...state,exportedAt:new Date().toISOString()},null,2),filename('Sicherung.json'),'application/json');$('status').textContent='JSON-Sicherung wurde erstellt.'});
+$('restore').addEventListener('click',()=>$('restore-file').click());
+$('restore-file').addEventListener('change',async e=>{const file=e.target.files[0];e.target.value='';if(!file)return;try{if(file.size>3e6)throw Error('Datei zu groß');const obj=JSON.parse(await file.text());if(obj.version!==2||!Array.isArray(obj.rows)||obj.rows.length>1000)throw Error('Unbekanntes Format');const next={version:2,project:String(obj.project||'').slice(0,120),defaultThick:String(obj.defaultThick||'40').slice(0,20),rows:obj.rows.map(cleanRow).filter(Boolean)};if(!confirm('Aktuelle Liste durch diese Sicherung ersetzen?'))return;state=next;refreshFields();draw();save();$('status').textContent='Sicherung geladen.'}catch(e){$('status').textContent='Sicherung konnte nicht geöffnet werden.'}});
+$('clear').addEventListener('click',()=>{if(!confirm('Neue Liste beginnen? Die aktuelle Liste wird gelöscht. Vorher bei Bedarf eine JSON-Sicherung erstellen.'))return;state={version:2,project:'',defaultThick:'40',rows:[]};refreshFields();draw();save();$('status').textContent='Neue Liste begonnen.';window.scrollTo({top:0,behavior:'smooth'})});
+let dark=false;try{let theme=JSON.parse(localStorage.getItem(THEME));dark=theme==='dark'}catch(e){}
+function setTheme(v){dark=v;document.documentElement.dataset.theme=v?'dark':'light';$('theme-btn').textContent=v?'☀ Hell':'☾ Dunkel';try{localStorage.setItem(THEME,JSON.stringify(v?'dark':'light'))}catch(e){}}
+$('theme-btn').addEventListener('click',()=>setTheme(!dark));
+restoreLoaded();refreshFields();draw();save();setTheme(dark);
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js?v=2.0.0',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{});let refreshing=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload()}})});
+})();
+</script>
 </body>
 </html>
