@@ -1,63 +1,25 @@
-HOLZOPTIX MOBIL – KUBIKMETER-SCHNELLERFASSUNG V2.6
+HolzOptiX – Schnellerfassung 2.7 – GitHub Pages
 
-GitHub Pages bleibt unverändert:
-https://test-low.github.io/Holz-Rechner/
+Veröffentlichung
+1. ZIP entpacken.
+2. Dateien aus dem entpackten Ordner (index.html, sw.js, manifest.webmanifest, aktualisieren.html und icons/) im bestehenden Repository test-low/Holz-Rechner ins Hauptverzeichnis laden.
+3. Alte Dateien überschreiben, Änderungen committen.
+4. Die Adresse bleibt https://test-low.github.io/Holz-Rechner/
+5. Bei altem Offline-Cache /aktualisieren.html verwenden.
 
-UPDATE: ZIP entpacken. index.html, sw.js, manifest.webmanifest,
-aktualisieren.html und den icons-Ordner IN DAS HAUPTVERZEICHNIS
-des bestehenden GitHub-Repositories test-low/Holz-Rechner hochladen,
-vorhandene Dateien ersetzen und Commit changes wählen.
-Wenn noch die alte Fassung zu sehen ist: .../aktualisieren.html öffnen.
+NEU IN 2.7
+- Messmodus pro Längenreihe: jeweils eine Bohlenbreite eintippen und mit Weiter bzw. + Bohle übernehmen hinzufügen. Eingaben werden in der gewöhnlichen Breitenliste gespeichert.
+- Gespeicherte Standardmaße: verfügbare Längen/Stärken per Tippen übernehmen; aktuelle Werte mit „Merken“ zu den Favoriten hinzufügen; gespeicherte Maße lassen sich unter „Standardmaße verwalten / entfernen“ entfernen.
+- Mehrere Aufmaße: anlegen, umbenennen, umschalten und nach Bestätigung löschen. Bestehende 2.6-Daten werden als erstes Aufmaß übernommen.
+- Plausibilitätswarnungen für auffällige Längen, Stärken und Bohlenbreiten; ungewöhnliche Einzelbreiten erfordern eine zweite Bestätigung.
+- JSON-Sicherung für ein Aufmaß wie bisher; neues Komplettbackup aller Aufmaße inklusive Favoriten und nicht-destruktiver Import.
 
-NEU IN V2.6 – EIGENE ZAHLENTASTATUR FÜR DAS HANDY:
-- Für Stärke, Länge, Bohlenbreiten und die komplette Zahlenliste.
-- Das Handy zeigt dort nicht mehr die normale Systemtastatur.
-- Große Tasten für Zahlen, Komma/Punkt, x für Stückzahl, Leer, Löschen,
-  Zurück und Weiter zum nächsten Eingabefeld bzw. zur nächsten Länge.
-- Für Bohlenbreiten werden Dezimalwerte weiterhin mit Punkt getrennt.
-- Auftrag und Notizen nutzen die normale Texteingabe.
-- Am PC bleiben alle Eingaben mit der normalen Tastatur bedienbar.
-- Die Funktion ist für kleine Touch-Displays vorgesehen.
+BESTEHENDE FUNKTIONEN
+- Individuelle Handy-Zahlentastatur für Zahlenfelder (auch Einzelmessung)
+- Mengen (40x5), freie Breitenliste, Längenreihen, Undo, CSV-Export, sortierte Druckansicht, mehrseitige PDF mit Zwischensummen, Offline-Funktion, Hell-/Dunkelmodus.
+- Keine Produktnamen oder Internetadressen in der direkt generierten PDF.
 
-DRUCKEN AUF DEM HANDY (seit V2.5):
-- „Sortiert drucken“ öffnet am Handy eine fertige, sortierte PDF.
-- Wenn der mobile Browser das Öffnen verhindert, erscheinen deutlich
-  sichtbare Links „PDF zum Drucken öffnen“ und „PDF speichern“.
-- Aus der PDF über das Menü „Drucken“ wählen. Auf dem PC bleibt der
-  normale Druckdialog bei „Sortiert drucken“ bestehen.
-- Logo, Produktname und GitHub-Adresse werden nicht in der PDF ausgegeben.
-- Alle bereits vorhandenen Funktionen und gespeicherten Listen bleiben.
-
-FUNKTIONEN AUS V2.4:
-1. Intelligente Schnelleingabe: Eingabe von z. B. 40 30 25 40x5 35x2.
-   '40x5' bedeutet fünf Bohlen zu 40 cm Breite; 40 × 5 geht ebenfalls.
-   Komma, Leerzeichen, Semikolon, Schrägstrich oder neue Zeile trennen.
-   Dezimalbreiten wie 32.5 mit Punkt eingeben.
-2. Rückgängig: Schaltfläche macht Eingaben, Löschen, Anlegen einer
-   Längenreihe, Massenimport, Neue Liste und Rücksicherung rückgängig.
-   Bis zu 35 Änderungsschritte während die Seite geöffnet ist.
-3. PDF und Browserdruck: Sortiert von kurzer nach langer Länge,
-   innerhalb der Länge nach Breite. Pro Länge werden Stückzahl und
-   Kubikmeter als Zwischensumme ausgewiesen. Gleiche Maße werden
-   zusammengefasst. Abschluss mit Gesamtzahl und Gesamtvolumen.
-4. Smartphone: Größere Felder, mitlaufende Gesamtsumme unten am Rand,
-   Schaltfläche '+ Neue Länge', Breitenfelder wachsen beim Tippen mit.
-5. Sicherung / Wiederherstellung: JSON-Datei laden/speichern;
-   vor Rücksicherung erscheint ein Vergleich mit der aktuellen Liste.
-   Rücksicherung kann unmittelbar rückgängig gemacht werden.
-
-WEITERHIN VORHANDEN:
-- Eingabe beliebiger Breitenreihenfolge; Eingaben bleiben unsortiert.
-- Holzart/Auftrag, Stärke je Reihe, Kommentare, CSV-Ausgabe.
-- Direkter PDF-Export ohne Browser-URL, Logos und Signaturen.
-- Browserdruck mit neutraler Bohlenliste.
-- Offline-Funktion, automatisches lokales Speichern, Darkmode,
-  vollständige Listenübernahme aus älteren Versionen.
-- Die alten lokalen Daten und bestehenden Sicherungen bleiben lesbar.
-
-HINWEIS: Die erzeugte PDF enthält absichtlich keinen Produktnamen.
-Die normale Browser-Druckfunktion kann je nach Browser eigene Kopf-
-und Fußzeilen hinzufügen. Für URL-freies Drucken den direkten PDF-
-Export benutzen. Die URL ändert sich NICHT durch dieses Update.
-
-WICHTIG: Neue Version über dasselbe GitHub-Pages-Repository veröffentlichen.
+HINWEISE
+- Aufmaße und Favoriten werden lokal je Gerät/Browser gespeichert. Kein automatischer Sync zwischen PC und Handy.
+- Browserdaten können gelöscht werden; regelmäßig „Alle Aufmaße sichern“ benutzen.
+- Ausdruck direkt aus PDF, da Browser bei eigenem Drucken Kopf-/Fußzeilen ergänzen kann.

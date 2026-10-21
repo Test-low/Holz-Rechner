@@ -102,6 +102,18 @@
 }
 @media(max-height:650px){.keypad-key{min-height:40px}.custom-keypad{padding-top:7px}.keypad-heading{margin-bottom:4px}.keypad-hint{margin-bottom:5px}}
 @media print{.custom-keypad{display:none!important}}
+
+/* Version 2.7: Projektübersicht, Favoriten, Einzelmessung und Plausibilität. */
+.project-selector{display:flex;flex-direction:column;gap:6px}.project-selector select{width:100%;min-height:51px;font:inherit;font-weight:650;font-size:16px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:11px 12px;border-radius:11px}
+.project-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.project-actions .btn{flex:1 1 125px;font-size:13px}
+.favorite-line{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:9px}.favorite-chips{display:flex;gap:6px;flex-wrap:wrap;min-width:0}.fav-chip{min-height:36px;border:1px solid #a5c9a9;border-radius:10px;padding:6px 10px;background:var(--light);font-weight:700;color:var(--primary);font-size:13px}
+.favorite-save{min-height:35px;background:var(--card);color:var(--muted);font-size:12px;font-weight:700;border:1px solid var(--line);border-radius:9px;padding:6px 9px}
+.row-favorites{display:grid;gap:2px;margin-top:3px}.row-favorites .favorite-line{margin-top:8px}.row-favorites .small-label{min-width:54px}
+.measure-box[hidden],.plausibility[hidden]{display:none!important}.measure-box{margin-top:13px;border:1px solid #a5c9a9;background:var(--card2);border-radius:12px;padding:13px}.measure-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:5px;margin-bottom:8px}.measure-head b{font-size:15px}.measure-grid{display:grid;grid-template-columns:minmax(0,1fr) 1fr;gap:9px;align-items:end}.measure-grid label{display:block}.single-width{display:block;width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:11px;border-radius:10px;min-height:52px;margin-top:5px;font-size:21px;font-weight:700}.measure-add{min-height:52px}.measure-feedback{font-size:12px;color:var(--muted);margin:9px 0 0;min-height:1.3em}.measure-feedback.alert{color:var(--error);font-weight:650}
+.plausibility{margin-top:9px;padding:9px 11px;border-left:4px solid #c88220;background:rgba(206,138,33,.10);border-radius:6px;color:var(--ink);font-size:12px;font-weight:650}
+@media(max-width:550px){.project-actions .btn{min-height:46px}.measure-grid{grid-template-columns:1fr}.measure-add{width:100%}.row-favorites .favorite-save{min-height:36px}}
+.favorites-manage{margin-top:9px;font-size:12px;color:var(--muted)}.favorites-manage summary{cursor:pointer;font-weight:650}.fav-manager{margin-top:9px}.fav-manager strong{display:block;margin-bottom:6px}.fav-remove{border:1px solid var(--line);background:var(--card2);color:var(--ink);border-radius:9px;padding:8px 10px;margin:0 6px 6px 0;min-height:38px;font-weight:650}.fav-remove span{color:var(--error);margin-left:4px}
+@media print{.project-manager,.row-favorites,.measure-box,.plausibility{display:none!important}}
 </style>
 </head>
 <body>
@@ -109,12 +121,16 @@
 <header class="top"><div class="brand"><div class="mark" aria-hidden="true">m³</div><div><b>HolzOptiX <span style="color:var(--primary)">/</span> MOBIL</b><small>KUBIKMETER · SCHNELLERFASSUNG</small></div></div><button id="theme-btn" class="mode" type="button">☾ Dunkel</button></header>
 <section class="hero"><h1>Viele Bohlen. Eine Eingabe.</h1><p>Eine Länge eingeben, alle Breiten hintereinander schreiben. Die Kubikmeter werden direkt zusammengerechnet.</p></section>
 <section class="summary" aria-label="Gesamtergebnis"><div><div class="summary-label">GESAMTVOLUMEN</div><span class="summary-number" id="sum-volume" aria-live="polite">0,0000 m³</span></div><div class="summary-side"><b id="sum-pieces">0</b> Bohlen<br><span id="sum-lines">0 Längen</span></div></section>
-<section class="card"><div class="card-head"><h2>Auftrag / Holzart</h2><span class="sub">Einmal ausfüllen</span></div><div class="settings"><div class="field"><label for="project">Bezeichnung</label><input id="project" type="text" maxlength="120" placeholder="z. B. Eiche Wurm" autocomplete="off"></div><div class="field"><label for="default-thick">Stärke (mm)</label><input id="default-thick" inputmode="decimal" type="text" value="40" placeholder="40" autocomplete="off"></div></div><p class="note">Die Stärke wird bei jeder neuen Längenreihe übernommen und kann dort geändert werden.</p></section>
+<section class="card no-print project-manager"><div class="card-head"><h2>Meine Aufmaße</h2><span class="sub" id="project-count">Lokal gespeichert</span></div>
+<div class="project-selector"><label class="small-label" for="project-select">Aktives Aufmaß</label><select id="project-select" aria-label="Aufmaß öffnen"></select></div>
+<div class="project-actions"><button id="project-new" class="btn btn-primary" type="button">+ Neues Aufmaß</button><button id="project-rename" class="btn btn-secondary" type="button">Umbenennen</button><button id="project-delete" class="btn btn-danger" type="button">Löschen</button></div>
+<p class="note">Jedes Aufmaß wird getrennt auf diesem Gerät gespeichert. Zum Übertragen oder Absichern unten „Alle Aufmaße sichern“ verwenden.</p></section>
+<section class="card"><div class="card-head"><h2>Auftrag / Holzart</h2><span class="sub">Einmal ausfüllen</span></div><div class="settings"><div class="field"><label for="project">Bezeichnung</label><input id="project" type="text" maxlength="120" placeholder="z. B. Eiche Wurm" autocomplete="off"></div><div class="field"><label for="default-thick">Stärke (mm)</label><input id="default-thick" inputmode="decimal" type="text" value="40" placeholder="40" autocomplete="off"></div></div><div class="favorite-line"><span class="small-label">Gespeicherte Stärken:</span><div class="favorite-chips" id="default-thick-favorites"></div><button type="button" class="favorite-save" id="save-default-thick">☆ Stärke merken</button></div><details class="favorites-manage no-print"><summary>Standardmaße verwalten / entfernen</summary><div id="favorites-manage-lengths"></div><div id="favorites-manage-thicks"></div></details><p class="note">Die Stärke wird bei jeder neuen Längenreihe übernommen und kann dort geändert werden.</p></section>
 <div class="card-head" style="margin:20px 2px 12px"><h2>Längen und Bohlenbreiten</h2><span class="sub">Automatisch gespeichert</span></div>
 <div id="entries"></div>
 <div class="actions-row no-print"><button id="add-row" class="btn add" type="button">+ Nächste Länge erfassen</button><button id="undo" class="undo-btn" type="button" disabled title="Letzte Änderung rückgängig machen">↶ Rückgängig</button></div>
 <section class="card import-details no-print"><details id="bulk-details"><summary>Komplette handschriftliche Liste auf einmal eingeben</summary><p>Eine Zeile je Länge, dahinter die Breiten mit <code>/</code>, Komma oder Leerzeichen trennen. Beispiel:</p><textarea id="bulk-input" class="import-text" placeholder="4,50 x 40 / 30 / 25 / 30 / 40 / 40 / 40&#10;4,00 x 30 / 35 / 38 / 70&#10;3,35 x 70 / 40 / 40 / 20 / 20 / 20" spellcheck="false"></textarea><div class="import-controls"><button class="btn btn-primary" id="bulk-add" type="button">Zeilen übernehmen</button><span class="tiny" id="bulk-message" role="status"></span></div></details></section>
-<section class="card no-print"><div class="card-head"><h2>Ergebnis sichern</h2><span class="sub">Für Büro und Baustelle</span></div><div class="toolbar"><button class="btn btn-secondary" id="csv" type="button">CSV exportieren</button><button class="btn btn-secondary" id="print" type="button">Sortiert drucken</button><button class="btn btn-primary" id="pdf" type="button">PDF ohne Internetadresse</button><button class="btn btn-secondary" id="backup" type="button">Sicherung (JSON)</button><button class="btn btn-secondary" id="restore" type="button">Sicherung öffnen</button><button class="btn btn-danger" id="clear" type="button">Neue Liste beginnen</button></div>
+<section class="card no-print"><div class="card-head"><h2>Ergebnis sichern</h2><span class="sub">Für Büro und Baustelle</span></div><div class="toolbar"><button class="btn btn-secondary" id="all-backup" type="button">Alle Aufmaße sichern</button><button class="btn btn-secondary" id="csv" type="button">CSV exportieren</button><button class="btn btn-secondary" id="print" type="button">Sortiert drucken</button><button class="btn btn-primary" id="pdf" type="button">PDF ohne Internetadresse</button><button class="btn btn-secondary" id="backup" type="button">Sicherung (JSON)</button><button class="btn btn-secondary" id="restore" type="button">Sicherung öffnen</button><button class="btn btn-danger" id="clear" type="button">Neue Liste beginnen</button></div>
 <div id="print-mobile-options" class="print-mobile-options" hidden>
   <strong>Sortierte Druckliste bereit</strong>
   <p id="print-mobile-message">Die PDF enthält alle Bohlen, sortiert nach Länge und Breite, mit Zwischensummen. Öffne sie und wähle dort „Drucken“.</p>
@@ -124,7 +140,7 @@
   </div>
 </div>
 <p class="note">Auf dem Handy öffnet „Sortiert drucken“ die sortierte PDF zum anschließenden Drucken. Alternativ „PDF ohne Internetadresse“ wählen und die Datei drucken. Eingaben bleiben unsortiert, der Ausdruck ist nach Länge und Breite sortiert und enthält Zwischensummen je Länge.</p><p class="backup-detail"><b>Sicherung:</b> Die JSON-Datei enthält deinen Auftrag und alle Eingaben. Zum Übertragen auf ein anderes Handy dort „Sicherung öffnen“ wählen. Vor dem Ersetzen wird nachgefragt; die Änderung kann direkt rückgängig gemacht werden.</p><input id="restore-file" type="file" accept=".json,application/json" hidden><p class="status" id="status" role="status"></p></section>
-<p class="footer">Breiten standardmäßig in <b>cm</b>, Längen in <b>m</b>, Stärke in <b>mm</b>. Beispielsweise bedeutet „40 30 25“ drei Bohlen. <b>40x3</b> erfasst drei gleich breite Bohlen. Für Breiten mit Nachkommastelle einen Punkt verwenden (z. B. 32.5). Änderungen werden nur auf diesem Gerät im Browser gespeichert. Bestehende Daten der vorherigen Version werden beim ersten Öffnen übernommen; deren Originalspeicher bleibt unangetastet.<br>HolzOptiX Mobil · Version 2.6 · <a href="./aktualisieren.html">Offline-Version aktualisieren</a></p>
+<p class="footer">Breiten standardmäßig in <b>cm</b>, Längen in <b>m</b>, Stärke in <b>mm</b>. Beispielsweise bedeutet „40 30 25“ drei Bohlen. <b>40x3</b> erfasst drei gleich breite Bohlen. Für Breiten mit Nachkommastelle einen Punkt verwenden (z. B. 32.5). Änderungen werden nur auf diesem Gerät im Browser gespeichert. Bestehende Daten der vorherigen Version werden beim ersten Öffnen übernommen; deren Originalspeicher bleibt unangetastet.<br>HolzOptiX Mobil · Version 2.7 · <a href="./aktualisieren.html">Offline-Version aktualisieren</a></p>
 <section id="print-sheet" class="print-sheet" aria-label="Sortierte Druckliste">
 <div class="print-header"><div><div class="print-heading">Bohlenliste</div><div class="print-muted" id="print-project"></div><div class="print-muted">Sortiert: Länge kurz → lang, Breite schmal → breit</div></div><div class="print-date" id="print-date"></div></div>
 <table><thead><tr><th>Länge (m)</th><th>Breite (cm)</th><th>Stärke (mm)</th><th>Anzahl</th><th>Volumen (m³)</th><th class="print-note">Notiz</th></tr></thead><tbody id="print-rows"></tbody><tfoot><tr><td colspan="3">Gesamt</td><td id="print-qty"></td><td id="print-sum"></td><td></td></tr></tfoot></table>
@@ -132,7 +148,10 @@
 </section>
 </div>
 <div class="mobile-dock no-print" aria-label="Schnellzugriff"><div><span class="dock-label">GESAMTVOLUMEN</span><span class="dock-total" id="dock-volume">0,0000 m³</span></div><button id="dock-add" type="button">+ Neue Länge</button></div>
-<template id="entry-template"><article class="card entry"><div class="row-top"><span class="row-index">LÄNGE 01</span><button type="button" class="delete no-print" aria-label="Längenreihe löschen">Entfernen</button></div><div class="dims"><label class="dim-label">Länge<div class="dim-wrap"><input class="dim-input length" type="text" inputmode="decimal" placeholder="4,50" autocomplete="off"><span class="suffix">m</span></div></label><label class="dim-label">Stärke<div class="dim-wrap"><input class="dim-input thick" type="text" inputmode="decimal" placeholder="40" autocomplete="off"><span class="suffix">mm</span></div></label></div><div class="input-block"><label>Bohlenbreiten (cm) – einfach hintereinander</label><textarea class="widths" rows="2" inputmode="text" placeholder="40 30 25 40x5 35x2" spellcheck="false" aria-label="Bohlenbreiten in Zentimetern"></textarea><p class="input-help">Beliebige Reihenfolge: <b>40 30 25 40x5 35x2</b> · Leerzeichen, Komma, / oder neue Zeile.</p><div class="width-feedback" aria-live="off">0 gültige Breiten</div></div><div class="invalid" hidden></div><div class="row-foot"><small class="count">0 Bohlen</small><strong class="volume">0,0000 m³</strong></div><input class="row-note no-print" type="text" maxlength="90" placeholder="Notiz für diese Länge (optional)" autocomplete="off"><div class="quick-row no-print"><button type="button" class="btn btn-secondary next-length">+ Weitere Länge</button></div></article></template>
+<template id="entry-template"><article class="card entry"><div class="row-top"><span class="row-index">LÄNGE 01</span><button type="button" class="delete no-print" aria-label="Längenreihe löschen">Entfernen</button></div><div class="dims"><label class="dim-label">Länge<div class="dim-wrap"><input class="dim-input length" type="text" inputmode="decimal" placeholder="4,50" autocomplete="off"><span class="suffix">m</span></div></label><label class="dim-label">Stärke<div class="dim-wrap"><input class="dim-input thick" type="text" inputmode="decimal" placeholder="40" autocomplete="off"><span class="suffix">mm</span></div></label></div>
+<div class="row-favorites"><div class="favorite-line"><span class="small-label">Längen:</span><div class="favorite-chips length-favorites"></div><button type="button" class="favorite-save save-length">☆ Merken</button></div><div class="favorite-line"><span class="small-label">Stärken:</span><div class="favorite-chips thick-favorites"></div><button type="button" class="favorite-save save-thick">☆ Merken</button></div></div><div class="input-block"><label>Bohlenbreiten (cm) – einfach hintereinander</label><textarea class="widths" rows="2" inputmode="text" placeholder="40 30 25 40x5 35x2" spellcheck="false" aria-label="Bohlenbreiten in Zentimetern"></textarea><p class="input-help">Beliebige Reihenfolge: <b>40 30 25 40x5 35x2</b> · Leerzeichen, Komma, / oder neue Zeile.</p><div class="width-feedback" aria-live="off">0 gültige Breiten</div></div><div class="plausibility" hidden role="status"></div><div class="invalid" hidden></div>
+<div class="measure-box no-print" hidden><div class="measure-head"><b>Einzelmessung</b><span class="tiny">Breite messen, eingeben, weiter</span></div><div class="measure-grid"><label class="small-label">Nächste Bohle (cm)<input class="single-width" type="text" inputmode="decimal" placeholder="z. B. 35" autocomplete="off" aria-label="Breite der nächsten Bohle in Zentimetern"></label><button type="button" class="btn btn-primary measure-add">+ Bohle übernehmen</button></div><p class="measure-feedback" role="status">Jede Übernahme fügt genau eine Bohle zu dieser Länge hinzu.</p></div>
+<div class="row-foot"><small class="count">0 Bohlen</small><strong class="volume">0,0000 m³</strong></div><input class="row-note no-print" type="text" maxlength="90" placeholder="Notiz für diese Länge (optional)" autocomplete="off"><div class="quick-row no-print"><button type="button" class="btn btn-secondary measure-toggle">Messmodus starten</button><button type="button" class="btn btn-secondary next-length">+ Weitere Länge</button></div></article></template>
 <section id="custom-keypad" class="custom-keypad no-print" aria-label="Zahlentastatur" hidden>
   <div class="keypad-heading"><strong id="keypad-title">Zahleneingabe</strong><button type="button" id="keypad-close" class="keypad-close">Fertig ✕</button></div>
   <p class="keypad-hint" id="keypad-hint">Maße direkt eingeben.</p>
@@ -142,6 +161,9 @@
 (()=>{'use strict';
 const $=id=>document.getElementById(id);
 const KEY='holzoptix-m3-schnellerfassung-v2', THEME='holzoptix-m3-theme-v1';
+const PROJECTS_KEY='holzoptix-m3-projekte-v27', FAV_KEY='holzoptix-m3-standardmasse-v27';
+let projects=[],activeProjectId=null;
+let favorites={lengths:['3,00','4,00','4,50'],thicks:['26','40','52','65']};
 let state={version:2,project:'',defaultThick:'40',rows:[]};
 const undoStack=[];
 function updateUndoButton(){ $('undo').disabled=undoStack.length===0; }
@@ -156,7 +178,7 @@ function undo(){
  const current=JSON.stringify(state);
  while(undoStack.length){const next=undoStack.pop();if(next!==current){previous=JSON.parse(next);break}}
  if(!previous){updateUndoButton();return}
- state=previous;refreshFields();draw();save();updateUndoButton();
+ hideNumberPad();state=previous;refreshFields();draw();save();updateUndoButton();
  $('status').textContent='Letzte Änderung rückgängig gemacht.';
 }
 let ignoreNextFocus=false;
@@ -172,16 +194,135 @@ const id=()=>String(Date.now())+'-'+Math.random().toString(36).slice(2);
 const cap=(n,min,max)=>Number.isFinite(n)&&n>=min&&n<=max;
 function parseWidths(str){let values=[],bad=[];const parts=String(str||'').trim().replace(/(\d(?:\.\d+)?)\s*[x×*]\s*(\d+)/gi,'$1x$2').split(/[\s,;\/]+/).filter(Boolean);for(const p of parts){const m=p.match(/^(\d+(?:\.\d+)?)(?:[x×*](\d+))?$/i);if(!m){bad.push(p);continue}const width=Number(m[1]),qty=m[2]?Number(m[2]):1;if(!cap(width,.001,10000)||!Number.isSafeInteger(qty)||qty<1||qty>10000||values.length+qty>20000){bad.push(p);continue}for(let i=0;i<qty;i++)values.push(width)}return {values,bad}}
 function calc(r){const len=num(r.length),thick=num(r.thick),w=parseWidths(r.widths);const errors=[...w.bad];if(String(r.length).trim()&&(!len||!cap(len,.001,1000)))errors.unshift('ungültige Länge');if(String(r.thick).trim()&&(!thick||!cap(thick,.001,10000)))errors.unshift('ungültige Stärke');let volume=0;if(len&&thick&&cap(len,.001,1000)&&cap(thick,.001,10000))for(const width of w.values)volume+=(len*thick*width)/100000;return {volume,count:(len&&thick&&cap(len,.001,1000)&&cap(thick,.001,10000))?w.values.length:0,errors,widths:w.values};}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){$('status').textContent='Speichern im Browser nicht möglich. Bitte eine JSON-Sicherung erstellen.'}}
+function save(){
+ try{
+  localStorage.setItem(KEY,JSON.stringify(state));
+  if(projects.length&&activeProjectId){
+   const active=projects.find(p=>p.id===activeProjectId);
+   if(active){active.name=state.project.trim()||'Unbenanntes Aufmaß';active.data=JSON.parse(JSON.stringify(state));active.updatedAt=Date.now()}
+   localStorage.setItem(PROJECTS_KEY,JSON.stringify({activeId:activeProjectId,projects}));
+   const option=$('project-select')?.selectedOptions[0];if(option&&active&&option.value===active.id)option.textContent=active.name;
+  }
+ }catch(e){$('status').textContent='Speicherplatz reicht nicht. Bitte „Alle Aufmaße sichern“ verwenden.'}
+}
 function cleanRow(r){if(!r||typeof r!=='object')return null;return {id:typeof r.id==='string'?r.id:id(),length:String(r.length??'').slice(0,20),thick:String(r.thick??'40').slice(0,20),widths:String(r.widths??'').slice(0,25000),note:String(r.note??'').slice(0,90)}}
+function cleanData(obj){
+ if(!obj||obj.version!==2||!Array.isArray(obj.rows)||obj.rows.length>1000)throw Error('Ungültiges Aufmaßformat.');
+ const result={version:2,project:String(obj.project||'').slice(0,120),defaultThick:String(obj.defaultThick||'40').slice(0,20),rows:obj.rows.map(cleanRow).filter(Boolean)};
+ const ids=new Set();for(const r of result.rows){if(ids.has(r.id))r.id=id();ids.add(r.id)}
+ return result;
+}
+function initProjects(){
+ let loaded=null;try{loaded=JSON.parse(localStorage.getItem(PROJECTS_KEY))}catch(e){}
+ if(loaded&&Array.isArray(loaded.projects)&&loaded.projects.length&&loaded.projects.length<=80){
+  projects=loaded.projects.filter(p=>p&&typeof p.id==='string'&&p.data&&p.data.version===2&&Array.isArray(p.data.rows)&&p.data.rows.length<=1000).map(p=>({id:p.id,name:String(p.name||'Unbenanntes Aufmaß').slice(0,120),updatedAt:Number(p.updatedAt)||Date.now(),data:cleanData(p.data)}));
+  const seen=new Set();projects=projects.filter(p=>{if(seen.has(p.id))return false;seen.add(p.id);return true});
+  if(projects.length){activeProjectId=projects.some(p=>p.id===loaded.activeId)?loaded.activeId:projects[0].id;state=JSON.parse(JSON.stringify(projects.find(p=>p.id===activeProjectId).data));}
+ }
+ if(!projects.length){activeProjectId=id();projects=[{id:activeProjectId,name:state.project.trim()||'Aufmaß 1',updatedAt:Date.now(),data:JSON.parse(JSON.stringify(state))}];}
+ let storedFav=null;try{storedFav=JSON.parse(localStorage.getItem(FAV_KEY))}catch(e){}
+ if(storedFav&&typeof storedFav==='object'){
+  for(const [type,max] of [['lengths',1000],['thicks',10000]])if(Array.isArray(storedFav[type]))favorites[type]=storedFav[type].filter(v=>typeof v==='string'&&num(v)&&num(v)<=max).slice(0,16);
+ }
+ renderProjectSelector();
+}
+function renderProjectSelector(){
+ const selector=$('project-select');if(!selector)return;
+ selector.replaceChildren();for(const p of projects){const option=document.createElement('option');option.value=p.id;option.textContent=p.name;selector.append(option)}
+ selector.value=activeProjectId;$('project-count').textContent=projects.length+' '+(projects.length===1?'Aufmaß':'Aufmaße')+' gespeichert';
+ $('project-delete').disabled=projects.length<=1;
+}
+function openProject(projectId){
+ const project=projects.find(p=>p.id===projectId);if(!project)return;
+ hideNumberPad();activeProjectId=project.id;state=JSON.parse(JSON.stringify(project.data));undoStack.length=0;updateUndoButton();
+ refreshFields();draw();renderProjectSelector();save();$('status').textContent='Aufmaß geöffnet: '+project.name;
+}
+function createProject(initialName){
+ if(projects.length>=80){alert('Maximal 80 Aufmaße. Bitte zuerst eine Gesamtsicherung erstellen und nicht mehr benötigte Aufmaße löschen.');return}
+ const suggested=initialName||'Aufmaß '+(projects.length+1);
+ const name=prompt('Name für das neue Aufmaß:',suggested);if(name===null)return;
+ const newName=name.trim().slice(0,120)||suggested;
+ hideNumberPad();activeProjectId=id();state={version:2,project:newName,defaultThick:state.defaultThick||'40',rows:[]};
+ projects.push({id:activeProjectId,name:newName,updatedAt:Date.now(),data:JSON.parse(JSON.stringify(state))});
+ undoStack.length=0;updateUndoButton();refreshFields();draw();renderProjectSelector();save();
+ $('status').textContent='Neues Aufmaß „'+newName+'“ angelegt. Vorherige Aufmaße bleiben gespeichert.';
+ window.scrollTo({top:0,behavior:'smooth'});
+}
+function renameProject(){const n=prompt('Aufmaß umbenennen:',state.project.trim()||'Unbenanntes Aufmaß');if(n===null)return;const name=n.trim().slice(0,120);if(!name)return;pushUndo();state.project=name;$('project').value=name;save();renderProjectSelector();}
+function deleteProject(){
+ if(projects.length<=1){alert('Das letzte Aufmaß kann nicht gelöscht werden.');return}
+ const current=projects.find(p=>p.id===activeProjectId);if(!confirm('Aufmaß „'+(current?.name||'')+'“ wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden. Vorher bei Bedarf eine Sicherung erstellen.'))return;
+ const idx=projects.findIndex(p=>p.id===activeProjectId);projects.splice(idx,1);
+ openProject(projects[Math.max(0,idx-1)].id);
+ $('status').textContent='Aufmaß gelöscht. Die übrigen Aufmaße sind erhalten geblieben.';
+}
+function favoriteValues(type){return favorites[type]||[]}
+function favoriteAction(e){const b=e.target.closest('button[data-fav-type]');if(!b)return;
+ const field=b.closest('.entry')?.querySelector(b.dataset.favType==='lengths'?'.length':'.thick')||(b.dataset.favType==='thicks'?$('default-thick'):null);
+ if(!field)return;pushUndo();field.value=b.dataset.favValue;field.dispatchEvent(new Event('input',{bubbles:true}));
+}
+function fillFavoriteChips(el,type){el.replaceChildren();for(const value of favoriteValues(type)){
+ const button=document.createElement('button');button.type='button';button.className='fav-chip';button.dataset.favType=type;button.dataset.favValue=value;button.textContent=value+(type==='lengths'?' m':' mm');el.append(button)
+ }}
+function renderFavorites(){
+ fillFavoriteChips($('default-thick-favorites'),'thicks');
+ for(const el of entryNodes.values()){fillFavoriteChips(el.querySelector('.length-favorites'),'lengths');fillFavoriteChips(el.querySelector('.thick-favorites'),'thicks')}
+ for(const [type,label] of [['lengths','Gespeicherte Längen'],['thicks','Gespeicherte Stärken']]){
+  const el=$('favorites-manage-'+type);el.replaceChildren();const title=document.createElement('strong');title.textContent=label;el.append(title);
+  for(const val of favorites[type]){const button=document.createElement('button');button.type='button';button.className='fav-remove';button.textContent=val+(type==='lengths'?' m':' mm')+'  ×';button.dataset.removeFavType=type;button.dataset.removeFavValue=val;button.setAttribute('aria-label',val+' entfernen');el.append(button)}
+ }
+}
+function storeFavorite(type,value){
+ const n=num(value),top=type==='lengths'?1000:10000;if(!n||n>top){alert('Bitte zuerst ein gültiges Maß eingeben.');return}
+ const display=type==='lengths'?String(value).replace('.',',').trim():String(value).replace('.',',').trim();
+ if(favorites[type].some(v=>num(v)===n))return;
+ if(favorites[type].length>=16){alert('Maximal 16 gespeicherte Maße pro Kategorie.');return}
+ favorites[type].push(display);favorites[type].sort((a,b)=>num(a)-num(b));localStorage.setItem(FAV_KEY,JSON.stringify(favorites));renderFavorites();
+}
+function deleteFavorite(type,value){favorites[type]=favorites[type].filter(v=>v!==value);localStorage.setItem(FAV_KEY,JSON.stringify(favorites));renderFavorites()}
+function getPlausibility(r,c){
+ const warnings=[];const length=num(r.length),thick=num(r.thick);
+ if(length&&(length<.5||length>12))warnings.push('Länge '+r.length+' m ungewöhnlich');
+ if(thick&&(thick<10||thick>150))warnings.push('Stärke '+r.thick+' mm ungewöhnlich');
+ if(c.widths.some(w=>w<5||w>120))warnings.push('Bohlenbreite unter 5 oder über 120 cm prüfen');
+ return warnings;
+}
+function commitSingleWidth(r,el,confirmed=false){
+ const input=el.querySelector('.single-width'),feedback=el.querySelector('.measure-feedback');const width=num(input.value);
+ if(!width||!cap(width,.001,10000)){
+  feedback.classList.add('alert');feedback.textContent='Bitte eine gültige Breite in cm eingeben.';return false;
+ }
+ if(parseWidths(r.widths).values.length>=20000){feedback.classList.add('alert');feedback.textContent='Maximal 20.000 Bohlen pro Länge.';return false}
+ if((width<5||width>120)&&!confirmed){
+  feedback.classList.add('alert');feedback.textContent='Auffällige Breite: '+fmtN(width)+' cm. Noch einmal „Bohle übernehmen“ oder „Weiter“ drücken, um sie trotzdem zu übernehmen.';
+  input.dataset.confirmValue=input.value;return false;
+ }
+ pushUndo();const token=String(width);r.widths=(r.widths.trim()?(r.widths.trim()+' '):'')+token;
+ const widths=el.querySelector('.widths');widths.value=r.widths;fitWidths(widths);
+ input.value='';delete input.dataset.confirmValue;feedback.classList.remove('alert');feedback.textContent='Bohle übernommen: '+fmtN(width)+' cm. Nächste Breite eingeben.';
+ renderRowTotals(r,el);renderSummary();save();input.focus({preventScroll:true});if(mobileNumberPad)showNumberPad(input);
+ return true;
+}
 function restoreLoaded(){let loaded=null;try{loaded=JSON.parse(localStorage.getItem(KEY))}catch(e){}if(loaded&&loaded.version===2&&Array.isArray(loaded.rows)){state={version:2,project:String(loaded.project||'').slice(0,120),defaultThick:String(loaded.defaultThick||'40').slice(0,20),rows:loaded.rows.slice(0,1000).map(cleanRow).filter(Boolean)};return}
 // Altbestände der vorigen App nur kopieren, niemals löschen oder überschreiben.
 for(const key of ['holzoptix-m3-positionen-v1','holzwerk-m3-positionen-v1']){let old=null;try{old=JSON.parse(localStorage.getItem(key))}catch(e){}if(!Array.isArray(old)||!old.length)continue;const unit={mm:.001,cm:.01,m:1};let migrated=[];for(const p of old){if(!p||![p.thickness,p.width,p.length].every(x=>typeof x==='number'&&Number.isFinite(x)&&x>0))continue;if(![p.thicknessUnit,p.widthUnit,p.lengthUnit].every(u=>Object.prototype.hasOwnProperty.call(unit,u)))continue;let quantity=Number.isSafeInteger(p.quantity)&&p.quantity>0?p.quantity:1;const widthCm=p.width*unit[p.widthUnit]*100;const lenM=p.length*unit[p.lengthUnit],thickMM=p.thickness*unit[p.thicknessUnit]*1000;if(!cap(lenM,.001,1000)||!cap(thickMM,.001,10000)||!cap(widthCm,.001,10000))continue;migrated.push({id:id(),length:String(Number(lenM.toFixed(7))).replace('.',','),thick:String(Number(thickMM.toFixed(5))).replace('.',','),widths:fmtDecimal(widthCm)+(quantity>1?'x'+Math.min(quantity,10000):''),note:String(p.description||'').slice(0,90)})}if(migrated.length){state.rows=migrated;state.defaultThick=migrated[0].thick;state.project='Übernommene Positionen';break}}}
 function fmtDecimal(v){return Number(v.toFixed(7)).toString()}
 const entryNodes=new Map();
 function renderSummary(){let total=0,pieces=0,active=0;for(const r of state.rows){const c=calc(r);total+=c.volume;pieces+=c.count;if(c.count)active++} $('sum-volume').textContent=fmtV(total)+' m³';$('sum-pieces').textContent=fmtN(pieces);$('sum-lines').textContent=fmtN(active)+' Längen';$('dock-volume').textContent=fmtV(total)+' m³';}
-function renderRowTotals(r,el){const c=calc(r);el.querySelector('.count').textContent=fmtN(c.count)+' '+(c.count===1?'Bohle':'Bohlen');el.querySelector('.volume').textContent=fmtV(c.volume)+' m³';el.querySelector('.width-feedback').textContent=fmtN(c.widths.length)+' '+(c.widths.length===1?'eingegebene Breite':'eingegebene Breiten')+(c.errors.length?' · Eingabe prüfen':'');const error=el.querySelector('.invalid');if(c.errors.length){error.hidden=false;error.textContent='Bitte prüfen: '+c.errors.slice(0,4).join(', ')+(c.errors.length>4?' …':'')+'. Ungültige Werte werden nicht berechnet.'}else{error.hidden=true;error.textContent=''} }
-function mount(r){let el=$('entry-template').content.firstElementChild.cloneNode(true);entryNodes.set(r.id,el);el.dataset.id=r.id;el.querySelector('.length').value=r.length;el.querySelector('.thick').value=r.thick;el.querySelector('.widths').value=r.widths;el.querySelector('.row-note').value=r.note;for(const [cls,key] of [['length','length'],['thick','thick'],['widths','widths'],['row-note','note']]){{const field=el.querySelector('.'+cls);enableCustomKeypadField(field);trackInputStart(field);field.addEventListener('input',e=>{r[key]=e.target.value;if(key==='widths')fitWidths(e.target);renderRowTotals(r,el);renderSummary();save()})}}el.querySelector('.delete').addEventListener('click',()=>{pushUndo();if(state.rows.length===1){r.length='';r.widths='';r.note='';el.querySelector('.length').value='';el.querySelector('.widths').value='';el.querySelector('.row-note').value='';renderRowTotals(r,el);renderSummary();save();return}state.rows=state.rows.filter(v=>v.id!==r.id);el.remove();entryNodes.delete(r.id);renumber();renderSummary();save()});el.querySelector('.next-length').addEventListener('click',()=>addRow());el.querySelector('.length').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();el.querySelector('.widths').focus()}});fitWidths(el.querySelector('.widths'));renderRowTotals(r,el);return el}
+function renderRowTotals(r,el){const c=calc(r);el.querySelector('.count').textContent=fmtN(c.count)+' '+(c.count===1?'Bohle':'Bohlen');el.querySelector('.volume').textContent=fmtV(c.volume)+' m³';el.querySelector('.width-feedback').textContent=fmtN(c.widths.length)+' '+(c.widths.length===1?'eingegebene Breite':'eingegebene Breiten')+(c.errors.length?' · Eingabe prüfen':'');const warning=el.querySelector('.plausibility'),warns=getPlausibility(r,c);warning.hidden=!warns.length;warning.textContent=warns.length?'⚠ Bitte Maß prüfen: '+warns.join(' · ')+'.':'';const error=el.querySelector('.invalid');if(c.errors.length){error.hidden=false;error.textContent='Bitte prüfen: '+c.errors.slice(0,4).join(', ')+(c.errors.length>4?' …':'')+'. Ungültige Werte werden nicht berechnet.'}else{error.hidden=true;error.textContent=''} }
+function mount(r){let el=$('entry-template').content.firstElementChild.cloneNode(true);entryNodes.set(r.id,el);el.dataset.id=r.id;el.querySelector('.length').value=r.length;el.querySelector('.thick').value=r.thick;el.querySelector('.widths').value=r.widths;el.querySelector('.row-note').value=r.note;for(const [cls,key] of [['length','length'],['thick','thick'],['widths','widths'],['row-note','note']]){{const field=el.querySelector('.'+cls);enableCustomKeypadField(field);trackInputStart(field);field.addEventListener('input',e=>{r[key]=e.target.value;if(key==='widths')fitWidths(e.target);renderRowTotals(r,el);renderSummary();save()})}}el.querySelector('.delete').addEventListener('click',()=>{pushUndo();if(state.rows.length===1){r.length='';r.widths='';r.note='';el.querySelector('.length').value='';el.querySelector('.widths').value='';el.querySelector('.row-note').value='';renderRowTotals(r,el);renderSummary();save();return}state.rows=state.rows.filter(v=>v.id!==r.id);el.remove();entryNodes.delete(r.id);renumber();renderSummary();save()});el.querySelector('.next-length').addEventListener('click',()=>addRow());el.querySelector('.length').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();el.querySelector('.widths').focus()}});const single=el.querySelector('.single-width');enableCustomKeypadField(single);
+ const singleBox=el.querySelector('.measure-box');const toggle=el.querySelector('.measure-toggle');
+ toggle.addEventListener('click',()=>{
+  singleBox.hidden=!singleBox.hidden;toggle.textContent=singleBox.hidden?'Messmodus starten':'Messmodus schließen';
+  if(!singleBox.hidden){single.focus();}else if(activeNumberField===single)hideNumberPad();
+ });
+ el.querySelector('.measure-add').addEventListener('click',()=>commitSingleWidth(r,el,single.dataset.confirmValue===single.value));
+ single.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();commitSingleWidth(r,el,single.dataset.confirmValue===single.value)}});
+ single.addEventListener('input',()=>{delete single.dataset.confirmValue;const fb=el.querySelector('.measure-feedback');fb.classList.remove('alert');fb.textContent='Breite eingeben und mit Weiter übernehmen.'});
+ el.querySelector('.save-length').addEventListener('click',()=>storeFavorite('lengths',r.length));
+ el.querySelector('.save-thick').addEventListener('click',()=>storeFavorite('thicks',r.thick));
+ fillFavoriteChips(el.querySelector('.length-favorites'),'lengths');fillFavoriteChips(el.querySelector('.thick-favorites'),'thicks');
+ fitWidths(el.querySelector('.widths'));renderRowTotals(r,el);return el}
 function fitWidths(el){if(!el)return;el.style.height='auto';el.style.height=Math.min(280,Math.max(100,el.scrollHeight+2))+'px'}
 function renumber(){state.rows.forEach((r,i)=>{const el=entryNodes.get(r.id);if(el)el.querySelector('.row-index').textContent='LÄNGE '+String(i+1).padStart(2,'0')})}
 function draw(){entryNodes.clear();$('entries').replaceChildren();if(!state.rows.length)state.rows.push({id:id(),length:'',thick:state.defaultThick,widths:'',note:''});for(const r of state.rows)$('entries').append(mount(r));renumber();renderSummary()}
@@ -189,7 +330,7 @@ function addRow(length='',widths='',thick=state.defaultThick,note='',focus=true,
 // Angepasste Zifferntastatur für Smartphones: verhindert die Systemtastatur.
 // Textfelder (Auftrag/Notiz) und Desktop-Eingabe bleiben unverändert.
 const mobileNumberPad=window.matchMedia('(pointer: coarse) and (max-width: 800px)').matches;
-const numericFieldSelector='#default-thick, .length, .thick, .widths, #bulk-input';
+const numericFieldSelector='#default-thick, .length, .thick, .widths, .single-width, #bulk-input';
 let activeNumberField=null;
 const numberPad=$('custom-keypad');
 const numberGrid=$('keypad-grid');
@@ -201,6 +342,7 @@ function enableCustomKeypadField(field){
 }
 function numberFieldMode(field){
  if(field.matches('.widths'))return 'widths';
+ if(field.matches('.single-width'))return 'single';
  if(field.matches('#bulk-input'))return 'bulk';
  return 'number';
 }
@@ -209,14 +351,15 @@ function numberFieldTitle(field){
  if(field.matches('.length'))return 'Länge (m)';
  if(field.matches('.thick'))return 'Stärke (mm)';
  if(field.matches('.widths'))return 'Bohlenbreiten (cm)';
+ if(field.matches('.single-width'))return 'Einzelne Bohle (cm)';
  return 'Komplette Liste';
 }
 function keypadLayout(mode){
  return numberPadKeys.map(key=>{
   let text=key,disabled=false;
-  if(key==='decimal')text=mode==='widths'?'.':',';
-  if(key==='multiply'){text='×';disabled=mode==='number'}
-  if(key==='space'){text=mode==='number'?'Löschen':'Leer'}
+  if(key==='decimal')text=['widths','single'].includes(mode)?'.':',';
+  if(key==='multiply'){text='×';disabled=mode==='number'||mode==='single'}
+  if(key==='space'){text=(mode==='number'||mode==='single')?'Löschen':'Leer'}
   if(key==='backspace')text='⌫';
   if(key==='next')text='Weiter →';
   return {key,text,disabled};
@@ -237,7 +380,7 @@ function showNumberPad(field){
  activeNumberField=field;
  const mode=numberFieldMode(field);
  $('keypad-title').textContent=numberFieldTitle(field);
- $('keypad-hint').textContent=mode==='widths'?'Leerzeichen trennt Bohlen · × für Stückzahl (40×5) · Punkt für Dezimalbreiten':mode==='bulk'?'Komma für Dezimalstellen · × zwischen Länge und Breiten · Leer für Trennung':'Komma für Dezimalstellen · Weiter springt zum nächsten Eingabefeld';
+ $('keypad-hint').textContent=mode==='widths'?'Leerzeichen trennt Bohlen · × für Stückzahl (40×5) · Punkt für Dezimalbreiten':mode==='single'?'Einzelne Bohle eingeben · Weiter übernimmt und leert das Feld':mode==='bulk'?'Komma für Dezimalstellen · × zwischen Länge und Breiten · Leer für Trennung':'Komma für Dezimalstellen · Weiter springt zum nächsten Eingabefeld';
  numberGrid.replaceChildren();
  (mode==='bulk'?[...keypadLayout(mode),{key:'newline',text:'↵ Neue Zeile',disabled:false}]:keypadLayout(mode)).forEach(({key,text,disabled})=>{
   const b=document.createElement('button');b.type='button';b.className='keypad-key'+(key==='multiply'?' key-multiply':key==='next'?' key-next':!['0','1','2','3','4','5','6','7','8','9'].includes(key)?' key-special':'');
@@ -271,15 +414,16 @@ function numberPadPress(key){
   if(start===end&&start>0)start--;
   mutateNumberField(field,'',start,end);return;
  }
- if(key==='space'&&numberFieldMode(field)==='number'){
+ if(key==='space'&&['number','single'].includes(numberFieldMode(field))){
   // Auf Maßfeldern löscht die Extrataste den gesamten Wert.
   mutateNumberField(field,'',0,field.value.length);return;
  }
- let piece=key==='multiply'?'x':key==='space'?' ':key==='newline'?'\n':key==='decimal'?(numberFieldMode(field)==='widths'?'.':','):key;
+ let piece=key==='multiply'?'x':key==='space'?' ':key==='newline'?'\n':key==='decimal'?(['widths','single'].includes(numberFieldMode(field))?'.':','):key;
  if(key==='space'&&start===end&&start>0&&/\s/.test(field.value[start-1]))return;
  mutateNumberField(field,piece,start,end);
 }
 function nextNumberField(field){
+ if(field.matches('.single-width')){const el=field.closest('.entry'),r=state.rows.find(x=>x.id===el?.dataset.id);if(r)commitSingleWidth(r,el,field.dataset.confirmValue===field.value);return;}
  if(field.id==='default-thick'){
   const next=document.querySelector('#entries .length');if(next){next.focus({preventScroll:true});showNumberPad(next)}else hideNumberPad();return;
  }
@@ -317,6 +461,13 @@ if(mobileNumberPad){
 }
 
 function refreshFields(){$('project').value=state.project;$('default-thick').value=state.defaultThick}
+$('project-select').addEventListener('change',e=>openProject(e.target.value));
+$('project-new').addEventListener('click',()=>createProject());
+$('project-rename').addEventListener('click',renameProject);
+$('project-delete').addEventListener('click',deleteProject);
+$('save-default-thick').addEventListener('click',()=>storeFavorite('thicks',state.defaultThick));
+document.addEventListener('click',favoriteAction);
+document.addEventListener('click',e=>{const button=e.target.closest('button[data-remove-fav-type]');if(button)deleteFavorite(button.dataset.removeFavType,button.dataset.removeFavValue)});
 $('add-row').addEventListener('click',()=>addRow());$('dock-add').addEventListener('click',()=>addRow());$('undo').addEventListener('click',undo);
 trackInputStart($('project'));trackInputStart($('default-thick'));enableCustomKeypadField($('default-thick'));enableCustomKeypadField($('bulk-input'));
 $('project').addEventListener('input',e=>{state.project=e.target.value;save()});
@@ -524,30 +675,48 @@ $('backup').addEventListener('click',()=>{
  download(JSON.stringify(data,null,2),filename('Sicherung.json'),'application/json');
  $('status').textContent='Sicherung heruntergeladen. Die JSON-Datei außerhalb des Browsers aufbewahren.';
 });
+$('all-backup').addEventListener('click',()=>{
+ save();const data={backupFormat:'HolzOptiX-Alle-Aufmasse',version:1,exportedAt:new Date().toISOString(),favorites,projects:projects.map(p=>({name:p.name,data:p.data}))};
+ download(JSON.stringify(data,null,2),'Bohlenlisten-alle-Aufmasse-Sicherung.json','application/json');
+ $('status').textContent=projects.length+' Aufmaße gesichert. Datei außerhalb des Browsers aufbewahren.';
+});
 $('restore').addEventListener('click',()=>$('restore-file').click());
 $('restore-file').addEventListener('change',async e=>{
  const file=e.target.files[0];e.target.value='';if(!file)return;
  try{
-  if(file.size>3e6)throw Error('Datei ist zu groß (maximal 3 MB).');
+  if(file.size>8e6)throw Error('Datei ist zu groß (maximal 8 MB).');
   const obj=JSON.parse(await file.text());
-  if(!obj || obj.version!==2 || !Array.isArray(obj.rows) || obj.rows.length>1000)throw Error('Kein unterstütztes Sicherungsformat.');
-  const next={version:2,project:String(obj.project||'').slice(0,120),defaultThick:String(obj.defaultThick||'40').slice(0,20),rows:obj.rows.map(cleanRow).filter(Boolean)};
-  if(!next.rows.length && obj.rows.length)throw Error('Sicherung enthält keine nutzbaren Längenreihen.');
-  const ids=new Set();
-  next.rows.forEach(r=>{if(ids.has(r.id))r.id=id();ids.add(r.id)});
-  const valid=next.rows.reduce((n,r)=>n+calc(r).count,0);
-  const before=state.rows.reduce((n,r)=>n+calc(r).count,0);
-  const message=`Sicherung „${file.name}“ laden?\n\nSicherung: ${valid} Bohlen, ${next.rows.length} Längenreihen.\nAktuelle Liste: ${before} Bohlen.\n\nDeine aktuelle Liste wird ersetzt. Direkt danach ist „Rückgängig“ möglich.`;
-  if(!confirm(message))return;
-  pushUndo();state=next;refreshFields();draw();save();$('status').textContent='Sicherung geladen. Mit „Rückgängig“ kannst du die vorherige Liste wiederherstellen.';
- }catch(err){$('status').textContent='Sicherung konnte nicht geöffnet werden: '+(err.message||'Unbekannter Fehler');}
+  if(obj?.backupFormat==='HolzOptiX-Alle-Aufmasse'&&obj.version===1&&Array.isArray(obj.projects)){
+   if(!obj.projects.length||obj.projects.length+projects.length>80)throw Error('Zu viele Aufmaße in der Sicherung (maximal 80 insgesamt).');
+   const additions=obj.projects.map(p=>({id:id(),name:String(p.name||'Importiertes Aufmaß').slice(0,120),updatedAt:Date.now(),data:cleanData(p.data)}));
+   if(!confirm(additions.length+' Aufmaße aus der Sicherung zusätzlich importieren? Bestehende Aufmaße werden nicht überschrieben.'))return;
+   projects.push(...additions);
+   if(obj.favorites&&typeof obj.favorites==='object'){
+    for(const key of ['lengths','thicks'])if(Array.isArray(obj.favorites[key])){
+     for(const val of obj.favorites[key])if(typeof val==='string'&&num(val)&&favorites[key].length<16&&!favorites[key].some(x=>num(x)===num(val)))favorites[key].push(val);
+     favorites[key].sort((a,b)=>num(a)-num(b));
+    }
+    localStorage.setItem(FAV_KEY,JSON.stringify(favorites));renderFavorites();
+   }
+   renderProjectSelector();openProject(additions[0].id);
+   $('status').textContent=additions.length+' Aufmaße importiert; bisherige Aufmaße bleiben erhalten.';
+  }else{
+   const next=cleanData(obj);
+   if(projects.length>=80)throw Error('Maximal 80 Aufmaße. Bitte erst Aufmaße sichern und aufräumen.');
+   const valid=next.rows.reduce((n,r)=>n+calc(r).count,0);
+   if(!confirm('Sicherung „'+file.name+'“ mit '+valid+' Bohlen als neues Aufmaß importieren? Das aktuelle Aufmaß bleibt erhalten.'))return;
+   const saved={id:id(),name:next.project.trim()||'Importiertes Aufmaß',updatedAt:Date.now(),data:next};
+   projects.push(saved);openProject(saved.id);
+   $('status').textContent='Sicherung als zusätzliches Aufmaß geöffnet. Vorherige Listen sind erhalten geblieben.';
+  }
+ }catch(err){$('status').textContent='Sicherung konnte nicht geöffnet werden: '+(err.message||'Unbekannter Fehler')}
 });
-$('clear').addEventListener('click',()=>{if(!confirm('Neue Liste beginnen? Die aktuelle Liste wird gelöscht. Vorher bei Bedarf eine JSON-Sicherung erstellen.'))return;pushUndo();state={version:2,project:'',defaultThick:'40',rows:[]};refreshFields();draw();save();$('status').textContent='Neue Liste begonnen.';window.scrollTo({top:0,behavior:'smooth'})});
+$('clear').addEventListener('click',()=>createProject());
 let dark=false;try{let theme=JSON.parse(localStorage.getItem(THEME));dark=theme==='dark'}catch(e){}
 function setTheme(v){dark=v;document.documentElement.dataset.theme=v?'dark':'light';$('theme-btn').textContent=v?'☀ Hell':'☾ Dunkel';try{localStorage.setItem(THEME,JSON.stringify(v?'dark':'light'))}catch(e){}}
 $('theme-btn').addEventListener('click',()=>setTheme(!dark));
-restoreLoaded();refreshFields();draw();save();setTheme(dark);
-if('serviceWorker' in navigator && location.protocol.startsWith('http'))window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js?v=2.6.0',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{});let refreshing=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload()}})});
+restoreLoaded();initProjects();refreshFields();draw();renderFavorites();save();setTheme(dark);
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js?v=2.7.0',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{});let refreshing=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload()}})});
 })();
 </script>
 </body>
