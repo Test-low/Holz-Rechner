@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#2f7d3a">
+  <meta name="description" content="Mobiler Kubikmeter-Rechner für Holz: Maße, Stückzahl, Einzelvolumen und Gesamtsumme.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/png" href="./icons/icon-192.png">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <title>Kubikmeter-Rechner | HolzWerk</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f5f7f5;
+      --surface: #ffffff;
+      --surface-alt: #f3f7f3;
+      --text: #1c2a20;
+      --muted: #617065;
+      --line: #e1e8e2;
+      --green: #2f7d3a;
+      --green-dark: #24642d;
+      --green-pale: #e9f4ea;
+      --danger: #b83939;
+      --shadow: 0 12px 35px rgba(17, 52, 25, .055);
+      --radius: 20px;
+    }
+    [data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #111815;
+      --surface: #1b251e;
+      --surface-alt: #202e24;
+      --text: #edf7ef;
+      --muted: #a6b8a9;
+      --line: #354338;
+      --green: #72bf7c;
+      --green-dark: #98d5a0;
+      --green-pale: #233a29;
+      --danger: #ff9090;
+      --shadow: 0 12px 35px rgba(0, 0, 0, .15);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; min-height: 100vh; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.45; }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; touch-action: manipulation; }
+    button:disabled { cursor: not-allowed; opacity: .48; }
+    :focus-visible { outline: 3px solid var(--green); outline-offset: 2px; }
+    .shell { max-width: 1100px; margin: 0 auto; padding: 26px 20px 52px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 35px; }
+    .identity { display: flex; align-items: center; gap: 11px; font-size: .78rem; font-weight: 800; letter-spacing: .12em; }
+    .brandmark { width: 37px; height: 37px; border-radius: 11px; background: #2f7d3a; color: white; display: grid; place-items: center; font-size: 19px; font-weight: 900; letter-spacing: -.05em; }
+    .theme-button { display: inline-flex; align-items: center; gap: 9px; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; color: var(--text); padding: 9px 14px; font-weight: 650; font-size: .85rem; }
+    .hero { margin-bottom: 25px; }
+    .eyebrow { color: var(--green); font-weight: 800; letter-spacing: .09em; font-size: .74rem; text-transform: uppercase; margin: 0 0 8px; }
+    h1 { font-size: clamp(2rem, 5vw, 2.9rem); line-height: 1.13; letter-spacing: -.045em; margin: 0 0 8px; }
+    .hero p:last-child { max-width: 620px; color: var(--muted); margin: 0; }
+    .dashboard { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); gap: 20px; align-items: start; }
+    .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; min-width: 0; }
+    .card-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+    h2 { font-size: 1.2rem; margin: 0; letter-spacing: -.025em; }
+    .hint { color: var(--muted); font-size: .82rem; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .field.wide { grid-column: 1 / -1; }
+    label { font-size: .88rem; font-weight: 680; }
+    .field input, .field select { min-height: 49px; width: 100%; border: 1px solid var(--line); border-radius: 11px; background: var(--surface); color: var(--text); padding: 10px 12px; min-width: 0; }
+    .field input::placeholder { color: var(--muted); opacity: .75; }
+    .field input:focus, .field select:focus { border-color: var(--green); outline: 2px solid transparent; box-shadow: 0 0 0 3px var(--green-pale); }
+    .measure-input { display: flex; gap: 7px; }
+    .measure-input input { flex: 1; width: 30px; }
+    .measure-input select { width: 77px; flex: none; padding: 10px 6px; text-align: center; }
+    .field-note { font-size: .75rem; color: var(--muted); }
+    .volume-preview { border: 1px solid var(--line); border-radius: 15px; background: var(--surface-alt); padding: 17px 18px; margin: 21px 0 17px; }
+    .preview-label { color: var(--muted); font-size: .84rem; font-weight: 650; }
+    .preview-value { font-size: clamp(1.8rem, 4vw, 2.45rem); font-weight: 820; font-variant-numeric: tabular-nums; letter-spacing: -.05em; color: var(--green); margin: 4px 0 5px; overflow-wrap: anywhere; }
+    .preview-secondary { font-size: .78rem; color: var(--muted); }
+    .actions { display: flex; gap: 9px; flex-wrap: wrap; }
+    .btn { border: 1px solid transparent; border-radius: 11px; min-height: 46px; padding: 11px 16px; font-weight: 730; font-size: .91rem; display: inline-flex; justify-content: center; align-items: center; gap: 8px; }
+    .btn-primary { background: #2f7d3a; color: white; flex: 1; }
+    .btn-primary:not(:disabled):hover { background: #24642d; }
+    .btn-secondary { background: var(--surface-alt); color: var(--text); border-color: var(--line); }
+    .btn-plain { border-color: var(--line); background: var(--surface); color: var(--text); }
+    .btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--line); }
+    .summary { background: linear-gradient(145deg, #2f7d3a, #205d2b); color: white; border: 0; padding: 25px; }
+    .summary h2 { color: #e8f3ea; font-size: .92rem; font-weight: 650; }
+    .total { font-size: clamp(2rem, 4vw, 2.7rem); font-weight: 850; letter-spacing: -.052em; line-height: 1.2; margin: 12px 0 20px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+    .summary-meta { border-top: 1px solid #ffffff3a; padding-top: 16px; display: flex; justify-content: space-between; gap: 12px; color: #eef9ef; font-size: .9rem; }
+    .summary-meta strong { font-weight: 800; }
+    .list-card { margin-top: 20px; }
+    .positions { display: flex; flex-direction: column; gap: 12px; }
+    .empty { text-align: center; border: 1px dashed var(--line); border-radius: 14px; padding: 32px 18px; background: var(--surface-alt); }
+    .empty-icon { font-size: 1.7rem; margin-bottom: 5px; color: var(--green); }
+    .empty strong { display: block; }
+    .empty p { color: var(--muted); font-size: .86rem; margin: 5px 0 0; }
+    .position { border: 1px solid var(--line); border-radius: 13px; padding: 13px 14px; }
+    .position-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .position-title { font-weight: 770; overflow-wrap: anywhere; }
+    .position-volume { font-weight: 820; font-variant-numeric: tabular-nums; color: var(--green); white-space: nowrap; }
+    .position-detail { color: var(--muted); font-size: .79rem; margin-top: 5px; overflow-wrap: anywhere; }
+    .position-actions { display: flex; gap: 15px; margin-top: 12px; }
+    .link-button { border: 0; background: transparent; padding: 4px 0; color: var(--green); font-size: .82rem; font-weight: 750; }
+    .link-button.delete { color: var(--danger); }
+    .list-tools { display: flex; gap: 9px; flex-wrap: wrap; padding-top: 17px; border-top: 1px solid var(--line); margin-top: 18px; }
+    .list-tools .btn { min-height: 40px; font-size: .8rem; padding: 9px 12px; }
+    .app-note { color: var(--muted); font-size: .78rem; margin: 20px 2px 0; }
+    #message { font-size: .83rem; min-height: 1.3em; color: var(--danger); margin: 7px 1px 0; }
+    @media (max-width: 740px) {
+      .shell { padding: 18px 15px 45px; }
+      .topbar { margin-bottom: 25px; }
+      .dashboard { grid-template-columns: 1fr; gap: 15px; }
+      .card { padding: 19px; border-radius: 17px; }
+      .list-card { margin-top: 15px; }
+      .summary { grid-row: 2; }
+      .form-grid { gap: 13px; }
+      .total { font-size: 2.25rem; }
+      .theme-button { padding: 8px 11px; }
+    }
+    @media (max-width: 390px) {
+      .shell { padding-left: 11px; padding-right: 11px; }
+      .card { padding: 15px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .field.wide { grid-column: auto; }
+      .measure-input select { width: 82px; }
+      h1 { font-size: 2rem; }
+      .btn { width: 100%; }
+      .list-tools .btn { width: auto; flex: 1; }
+    }
+    @media print {
+      :root, [data-theme="dark"] { color-scheme: light; --surface: #fff; --text: #111; --muted: #444; --line: #bbb; --green: #111; --surface-alt: #fff; }
+      body { background: white; color: black; }
+      .shell { max-width: 100%; padding: 0; }
+      .topbar, #entry-card, .hero .eyebrow, .hero p:last-child, .list-tools, .position-actions, .app-note { display: none !important; }
+      .hero { margin-bottom: 12px; }
+      .hero h1 { font-size: 20pt; }
+      .dashboard { display: block; }
+      .summary { padding: 14px 0; background: #fff !important; color: black; box-shadow: none; }
+      .summary h2, .summary-meta { color: black; }
+      .total { font-size: 20pt; margin: 6px 0; }
+      .summary-meta { border-color: #aaa; }
+      .list-card { box-shadow: none; border: none; padding: 10px 0; margin-top: 10px; }
+      .position { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="identity"><span class="brandmark" aria-hidden="true">m³</span><span>HOLZWERK <span style="color:var(--green)">/</span> MOBIL</span></div>
+      <button id="theme-toggle" class="theme-button" type="button" aria-label="Darstellung wechseln">☾ <span id="theme-label">Dunkel</span></button>
+    </header>
+
+    <section class="hero">
+      <p class="eyebrow">Holz · Volumenberechnung</p>
+      <h1>Kubikmeter-Rechner</h1>
+      <p>Stärke, Breite und Länge eingeben. Das Volumen wird sofort berechnet – auch für mehrere Holzpositionen.</p>
+    </section>
+
+    <div class="dashboard">
+      <section class="card" id="entry-card" aria-labelledby="entry-title">
+        <div class="card-head"><h2 id="entry-title">Maße eingeben</h2><span class="hint">Alle Maße frei wählbar</span></div>
+        <form id="entry-form" autocomplete="off" novalidate>
+          <div class="form-grid">
+            <div class="field wide">
+              <label for="description">Bezeichnung <span class="hint">(optional)</span></label>
+              <input id="description" type="text" maxlength="90" placeholder="z. B. KVH Fichte">
+            </div>
+            <div class="field">
+              <label for="thickness">Stärke / Höhe</label>
+              <div class="measure-input">
+                <input id="thickness" type="text" inputmode="decimal" placeholder="z. B. 60" aria-describedby="input-hint">
+                <select id="thickness-unit" aria-label="Einheit der Stärke"><option value="mm">mm</option><option value="cm">cm</option><option value="m">m</option></select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="width">Breite</label>
+              <div class="measure-input">
+                <input id="width" type="text" inputmode="decimal" placeholder="z. B. 120">
+                <select id="width-unit" aria-label="Einheit der Breite"><option value="mm">mm</option><option value="cm">cm</option><option value="m">m</option></select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="length">Länge</label>
+              <div class="measure-input">
+                <input id="length" type="text" inputmode="decimal" placeholder="z. B. 4,5">
+                <select id="length-unit" aria-label="Einheit der Länge"><option value="m">m</option><option value="cm">cm</option><option value="mm">mm</option></select>
+              </div>
+            </div>
+            <div class="field">
+              <label for="quantity">Stückzahl</label>
+              <input id="quantity" type="number" inputmode="numeric" min="1" step="1" value="1">
+            </div>
+          </div>
+          <p class="field-note" id="input-hint">Dezimalzahlen mit Komma oder Punkt möglich, z. B. 4,5.</p>
+          <div class="volume-preview" aria-live="polite" aria-atomic="true">
+            <div class="preview-label">Volumen dieser Position</div>
+            <div class="preview-value" id="current-volume">0,0000 m³</div>
+            <div class="preview-secondary" id="single-volume">Maße eingeben, um zu berechnen</div>
+          </div>
+          <div class="actions">
+            <button id="add-button" type="submit" class="btn btn-primary" disabled>+ Position hinzufügen</button>
+            <button id="reset-button" type="button" class="btn btn-secondary">Zurücksetzen</button>
+          </div>
+          <p id="message" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <div>
+        <section class="card summary" aria-label="Gesamtergebnis">
+          <h2>GESAMTVOLUMEN</h2>
+          <div class="total" id="grand-total" aria-live="polite">0,0000 m³</div>
+          <div class="summary-meta"><span>Positionen <strong id="position-count">0</strong></span><span>Holzteile <strong id="piece-count">0</strong></span></div>
+        </section>
+        <section class="card list-card" aria-labelledby="list-title">
+          <div class="card-head"><h2 id="list-title">Meine Positionen</h2><span class="hint" id="list-hint">Noch keine Positionen</span></div>
+          <div id="positions" class="positions"></div>
+          <div class="list-tools">
+            <button id="export-button" type="button" class="btn btn-plain" disabled>CSV exportieren</button>
+            <button id="print-button" type="button" class="btn btn-plain" disabled>Drucken / PDF</button>
+            <button id="clear-button" type="button" class="btn btn-danger" disabled>Liste leeren</button>
+          </div>
+        </section>
+      </div>
+    </div>
+    <p class="app-note">Die Positionen bleiben auf diesem Gerät im Browser gespeichert. Die Berechnung funktioniert auch ohne Internet. Für eine dauerhafte Nutzung kannst du die Seite zum Startbildschirm hinzufügen.</p>
+  </main>
+  <script>
+  (() => {
+    'use strict';
+    const STORAGE_KEY = 'holzwerk-m3-positionen-v1';
+    const THEME_KEY = 'holzwerk-m3-theme-v1';
+    const factors = { mm: 0.001, cm: 0.01, m: 1 };
+    const get = id => document.getElementById(id);
+    const fields = ['description', 'thickness', 'thickness-unit', 'width', 'width-unit', 'length', 'length-unit', 'quantity'];
+    const form = get('entry-form');
+    let positions = [];
+    let editingId = null;
+    const store = (key, value) => { try { localStorage.setItem(key, JSON.stringify(value)); } catch (_) {} };
+    const load = key => { try { return JSON.parse(localStorage.getItem(key)); } catch (_) { return null; } };
+    const decimal = text => {
+      const input = String(text ?? '').trim().replace(/\s/g, '').replace(',', '.');
+      if (!/^(?:\d+(?:\.\d*)?|\.\d+)$/.test(input)) return NaN;
+      const n = Number(input);
+      return Number.isFinite(n) && n > 0 ? n : NaN;
+    };
+    const formatVolume = value => {
+      if (!value) return '0,0000';
+      const decimals = Math.min(9, Math.max(4, Math.ceil(-Math.log10(value)) + 2));
+      return new Intl.NumberFormat('de-DE', { minimumFractionDigits: 4, maximumFractionDigits: decimals }).format(value);
+    };
+    const formatInput = v => new Intl.NumberFormat('de-DE', { maximumFractionDigits: 6 }).format(v);
+    const safeQuantity = value => Number.isSafeInteger(value) && value > 0 && value <= 10000000;
+    const readInput = () => {
+      const thickness = decimal(get('thickness').value);
+      const width = decimal(get('width').value);
+      const length = decimal(get('length').value);
+      const quantity = Number(get('quantity').value);
+      if (![thickness, width, length].every(Number.isFinite) || !safeQuantity(quantity)) return null;
+      const data = {
+        description: get('description').value.trim(), thickness, width, length, quantity,
+        thicknessUnit: get('thickness-unit').value,
+        widthUnit: get('width-unit').value,
+        lengthUnit: get('length-unit').value
+      };
+      const volumePerPiece = thickness * factors[data.thicknessUnit] * width * factors[data.widthUnit] * length * factors[data.lengthUnit];
+      const volume = volumePerPiece * quantity;
+      if (!Number.isFinite(volume) || volume <= 0) return null;
+      return { ...data, volumePerPiece, volume };
+    };
+    const refreshPreview = () => {
+      const data = readInput();
+      get('add-button').disabled = !data;
+      get('current-volume').textContent = `${formatVolume(data?.volume || 0)} m³`;
+      get('single-volume').textContent = data
+        ? `${formatVolume(data.volumePerPiece)} m³ je Stück × ${formatInput(data.quantity)} Stück`
+        : 'Maße eingeben, um zu berechnen';
+      get('message').textContent = '';
+    };
+    const cleanEntry = item => {
+      if (!item || typeof item !== 'object') return null;
+      const dimensions = ['thickness', 'width', 'length'].every(k => typeof item[k] === 'number' && Number.isFinite(item[k]) && item[k] > 0);
+      const units = ['thicknessUnit', 'widthUnit', 'lengthUnit'].every(k => Object.prototype.hasOwnProperty.call(factors, item[k]));
+      if (!dimensions || !units || !safeQuantity(item.quantity)) return null;
+      const volumePerPiece = item.thickness * factors[item.thicknessUnit] * item.width * factors[item.widthUnit] * item.length * factors[item.lengthUnit];
+      const volume = volumePerPiece * item.quantity;
+      if (!Number.isFinite(volume) || volume <= 0) return null;
+      return {
+        id: typeof item.id === 'string' ? item.id : `${Date.now()}-${Math.random()}`,
+        description: typeof item.description === 'string' ? item.description.slice(0,90) : '',
+        thickness: item.thickness, width: item.width, length: item.length,
+        quantity: item.quantity, thicknessUnit: item.thicknessUnit,
+        widthUnit: item.widthUnit, lengthUnit: item.lengthUnit,
+        volumePerPiece, volume
+      };
+    };
+    const button = (text, className, onClick, ariaLabel) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = className; b.textContent = text;
+      if (ariaLabel) b.setAttribute('aria-label', ariaLabel);
+      b.addEventListener('click', onClick);
+      return b;
+    };
+    const render = () => {
+      const container = get('positions');
+      container.replaceChildren();
+      if (positions.length === 0) {
+        const empty = document.createElement('div'); empty.className = 'empty';
+        const icon = document.createElement('div'); icon.className = 'empty-icon'; icon.textContent = 'm³';
+        const strong = document.createElement('strong'); strong.textContent = 'Deine Liste ist noch leer';
+        const p = document.createElement('p'); p.textContent = 'Berechne oben deine erste Holzposition und füge sie hinzu.';
+        empty.append(icon, strong, p); container.append(empty);
+      }
+      positions.forEach((item, idx) => {
+        const box = document.createElement('article'); box.className = 'position';
+        const top = document.createElement('div'); top.className = 'position-top';
+        const title = document.createElement('div'); title.className = 'position-title';
+        title.textContent = item.description || `Position ${idx+1}`;
+        const volume = document.createElement('div'); volume.className = 'position-volume';
+        volume.textContent = `${formatVolume(item.volume)} m³`;
+        top.append(title, volume);
+        const details = document.createElement('div'); details.className = 'position-detail';
+        details.textContent = `${formatInput(item.thickness)} ${item.thicknessUnit} × ${formatInput(item.width)} ${item.widthUnit} × ${formatInput(item.length)} ${item.lengthUnit} · ${formatInput(item.quantity)} Stück`;
+        const actions = document.createElement('div'); actions.className = 'position-actions';
+        actions.append(
+          button('Bearbeiten', 'link-button', () => editItem(item.id), `Position ${idx+1} bearbeiten`),
+          button('Löschen', 'link-button delete', () => deleteItem(item.id), `Position ${idx+1} löschen`)
+        );
+        box.append(top, details, actions); container.append(box);
+      });
+      const total = positions.reduce((s, p) => s + p.volume, 0);
+      const qty = positions.reduce((s, p) => s + p.quantity, 0);
+      get('grand-total').textContent = `${formatVolume(total)} m³`;
+      get('position-count').textContent = new Intl.NumberFormat('de-DE').format(positions.length);
+      get('piece-count').textContent = new Intl.NumberFormat('de-DE').format(qty);
+      get('list-hint').textContent = positions.length ? `${positions.length} gespeichert` : 'Noch keine Positionen';
+      ['export-button', 'print-button', 'clear-button'].forEach(id => get(id).disabled = !positions.length);
+      store(STORAGE_KEY, positions);
+    };
+    const resetForm = () => {
+      editingId = null;
+      form.reset();
+      get('entry-title').textContent = 'Maße eingeben';
+      get('add-button').textContent = '+ Position hinzufügen';
+      refreshPreview();
+    };
+    const editItem = id => {
+      const item = positions.find(p => p.id === id);
+      if (!item) return;
+      editingId = id;
+      fields.forEach(key => {
+        const dataKey = key.replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+        const value = item[dataKey];
+        get(key).value = typeof value === 'number' ? String(value).replace('.', ',') : value;
+      });
+      get('entry-title').textContent = 'Position bearbeiten';
+      get('add-button').textContent = 'Änderungen speichern';
+      refreshPreview();
+      get('entry-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+    const deleteItem = id => {
+      positions = positions.filter(p => p.id !== id);
+      if (editingId === id) resetForm();
+      render();
+    };
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      const data = readInput();
+      if (!data) {
+        get('message').textContent = 'Bitte gültige Maße und eine ganze Stückzahl größer 0 eingeben.';
+        return;
+      }
+      if (editingId) {
+        const index = positions.findIndex(p => p.id === editingId);
+        if (index >= 0) positions[index] = { ...data, id: editingId };
+      } else {
+        positions.push({ ...data, id: `${Date.now()}-${Math.random().toString(36).slice(2)}` });
+      }
+      resetForm();
+      render();
+    });
+    fields.forEach(id => {
+      get(id).addEventListener('input', refreshPreview);
+      get(id).addEventListener('change', refreshPreview);
+    });
+    get('reset-button').addEventListener('click', resetForm);
+    get('clear-button').addEventListener('click', () => {
+      if (positions.length && window.confirm('Wirklich alle Positionen aus dieser Liste löschen?')) {
+        positions = []; resetForm(); render();
+      }
+    });
+    get('print-button').addEventListener('click', () => window.print());
+    get('export-button').addEventListener('click', () => {
+      if (!positions.length) return;
+      const csvCell = value => {
+        let text = String(value ?? '');
+        if (/^[\s]*[=+@\-]/.test(text)) text = "'" + text;
+        return '"' + text.replace(/"/g, '""') + '"';
+      };
+      const decimalCSV = n => n.toFixed(9).replace('.', ',');
+      const lines = [['Pos.', 'Bezeichnung', 'Stärke', 'Einheit Stärke', 'Breite', 'Einheit Breite', 'Länge', 'Einheit Länge', 'Stück', 'm³ je Stück', 'm³ gesamt']];
+      positions.forEach((p, i) => lines.push([i+1, p.description || `Position ${i+1}`, p.thickness, p.thicknessUnit, p.width, p.widthUnit, p.length, p.lengthUnit, p.quantity, decimalCSV(p.volumePerPiece), decimalCSV(p.volume)]));
+      lines.push(['', 'SUMME', '', '', '', '', '', '', positions.reduce((n,p) => n + p.quantity, 0), '', decimalCSV(positions.reduce((n,p) => n + p.volume, 0))]);
+      const csv = '\ufeff' + lines.map(line => line.map(csvCell).join(';')).join('\r\n');
+      const blob = new Blob([csv], {type: 'text/csv;charset=utf-8'});
+      const href = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = href; a.download = 'kubikmeter-liste.csv';
+      document.body.append(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(href), 1000);
+    });
+    const setTheme = value => {
+      document.documentElement.setAttribute('data-theme', value);
+      get('theme-label').textContent = value === 'dark' ? 'Hell' : 'Dunkel';
+      get('theme-toggle').firstChild.textContent = value === 'dark' ? '☀ ' : '☾ ';
+      store(THEME_KEY, value);
+    };
+    get('theme-toggle').addEventListener('click', () => setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'));
+    const saved = load(STORAGE_KEY);
+    if (Array.isArray(saved)) positions = saved.slice(0, 3000).map(cleanEntry).filter(Boolean);
+    setTheme(load(THEME_KEY) === 'dark' ? 'dark' : 'light');
+    refreshPreview();
+    render();
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+    }
+  })();
+  </script>
+</body>
+</html>
