@@ -147,7 +147,7 @@
 <body>
   <main class="shell">
     <header class="topbar">
-      <div class="identity"><span class="brandmark" aria-hidden="true">m³</span><span>HOLZOPTIX <span style="color:var(--green)">/</span> MOBIL</span></div>
+      <div class="identity"><span class="brandmark" aria-hidden="true">m³</span><span>HolzOptiX <span style="color:var(--green)">/</span> MOBIL</span></div>
       <button id="theme-toggle" class="theme-button" type="button" aria-label="Darstellung wechseln">☾ <span id="theme-label">Dunkel</span></button>
     </header>
 
@@ -434,7 +434,13 @@
     refreshPreview();
     render();
     if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
-      window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(reg => reg.update()).catch(() => {});
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (!refreshing) { refreshing = true; window.location.reload(); }
+        });
+      });
     }
   })();
   </script>

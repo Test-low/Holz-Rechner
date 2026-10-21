@@ -1,30 +1,25 @@
-HOLZWERK – KUBIKMETER-RECHNER FÜRS HANDY
-========================================
+HolzOptiX – Kubikmeter-Rechner fuer GitHub Pages
+===============================================
 
-SOFORT ANSEHEN
-- index.html im Browser öffnen (am PC direkt möglich).
-- Maße, Einheiten und Stückzahl eingeben; mehrere Positionen addieren.
-- Für den dauerhaften Zugriff vom Handy empfiehlt sich die Bereitstellung auf einer Website.
+WICHTIG: DIE DATEIEN WERDEN ERSETZT, NICHT DIE GESPEICHERTEN POSITIONEN.
 
-ONLINE STELLEN
-- Alle Dateien inklusive "icons"-Ordner auf einen Webserver mit HTTPS hochladen.
-- index.html ist der Einstieg. Alle Pfade sind relativ, die App kann auch in einem Unterordner liegen.
-- Alternativ statisches Hosting wie GitHub Pages nutzen.
-- Über "Zum Startbildschirm hinzufügen" lässt sich die Website wie eine App starten.
-- Nach dem ersten erfolgreichen Laden bleibt die Seite dank Service Worker auch offline verfügbar.
-- Ein reiner lokaler Dateiaufruf (file://) unterstützt Service Worker auf Handys normalerweise nicht.
+1. ZIP entpacken.
+2. Die Dateien index.html, sw.js, manifest.webmanifest und den Ordner icons
+   im selben GitHub-Repository in den HAUPTORDNER hochladen.
+   Bestehende gleichnamige Dateien mit diesen Versionen ERSETZEN.
+3. Unter Settings -> Pages muss main / (root) eingestellt sein.
+4. Nach GitHub Pages Deployment die Webseite neu laden.
+   Wenn noch die alte Ueberschrift erscheint: im Browser neu laden,
+   ggf. die Seite einmal schliessen und neu oeffnen.
+   Bei installierter Startbildschirm-App diese schliessen und neu oeffnen.
+5. Der Offline-Cache ist aktualisiert, damit die Seite bei zukuenftigen
+   Updates online zuerst die neue Version abruft. Ohne Internet bleibt
+   die zuletzt gespeicherte Version verfuegbar.
 
-DATEN
-- Alle Positionen werden nur lokal im jeweiligen Browser gespeichert (localStorage).
-- Kein Konto, kein Backend, keine externe Bibliothek, keine Datenübertragung durch die App.
-- Browserdaten löschen oder ein anderes Gerät nutzen = dort sind die Positionen nicht vorhanden.
+Datenerhalt:
+- Gleiches Repository und gleiche URL: bisherige lokal gespeicherte
+  Positionen und Hell/Dunkel-Einstellung bleiben auf dem Geraet.
+- Andere URL oder Domain: Browserdaten werden nicht automatisch uebertragen.
+- Alte interne Speicherkennungen dienen ausschliesslich der Uebernahme.
 
-BERECHNUNG
-m³ = Stärke in m × Breite in m × Länge in m × Stückzahl
-Beispiel: 60 mm × 120 mm × 4,5 m × 10 = 0,3240 m³
-
-ENTHALTEN
-- index.html: komplette Benutzeroberfläche und Rechner
-- manifest.webmanifest + icons: Installation zum Startbildschirm
-- sw.js: Offline-Verfügbarkeit nach Laden per HTTPS
-- CSV-Export; Drucken / als PDF speichern; Hell-/Dunkelmodus
+Formel: m³ = Staerke [m] x Breite [m] x Laenge [m] x Stueckzahl.

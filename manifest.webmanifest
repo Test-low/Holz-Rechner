@@ -1,5 +1,5 @@
 {
-  "name": "HolzWerk Kubikmeter-Rechner",
+  "name": "HolzOptiX Kubikmeter-Rechner",
   "short_name": "Kubikmeter",
   "description": "Holzvolumen berechnen und Positionen zusammenzählen",
   "start_url": "./index.html",
