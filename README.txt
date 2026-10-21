@@ -1,4 +1,4 @@
-HOLZOPTIX MOBIL – KUBIKMETER-SCHNELLERFASSUNG V2
+HOLZOPTIX MOBIL – KUBIKMETER-SCHNELLERFASSUNG V2.1
 
 GitHub Pages aktualisieren:
 1. ZIP auf dem PC entpacken.
@@ -29,3 +29,15 @@ für Übertragung JSON-Sicherung exportieren und importieren.
 
 Wenn bei GitHub Pages die alten Daten nicht auftauchen, sicherstellen,
 dass die URL (Domain/Repository-Pfad) gleich geblieben ist.
+
+Druck / PDF (NEU):
+- Die Eingabereihenfolge bleibt wie eingetippt.
+- Für Druck/PDF werden Längen aufsteigend (kurz nach lang) sortiert.
+- Bei gleicher Länge stehen die Breiten aufsteigend (schmal nach breit).
+- Identische Länge, Breite, Stärke und Notiz werden zu einer Anzahl zusammengefasst.
+- Die Kubikmeter je Maß und die Gesamtsumme werden im Ausdruck angezeigt.
+- Die Druckfunktion funktioniert auch über das Browser-Menü / Strg+P.
+- Die gespeicherten Eingaben und vorhandenen Sicherungen bleiben unverändert.
+
+Dein bisheriger GitHub-Pages-Link bleibt unverändert:
+https://test-low.github.io/Holz-Rechner/

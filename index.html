@@ -17,6 +17,33 @@
 @media(max-width:550px){.wrap{padding:13px 11px 36px}.top{margin-bottom:20px}.brand b{font-size:15px}.brand small{font-size:10px}.mark{width:40px;height:40px}.mode{font-size:12px;padding:10px}.card{border-radius:15px;padding:14px}.hero p{font-size:13px}.summary{padding:13px 14px;border-radius:14px}.summary-number{font-size:30px}.settings{grid-template-columns:minmax(0,1fr) 108px}.toolbar{grid-template-columns:1fr 1fr}.toolbar .btn:last-child{grid-column:1/-1}.row-foot strong{font-size:16px}}
 @media(max-width:350px){.brand b{font-size:13px}.summary-number{font-size:26px}.settings{grid-template-columns:1fr 95px}.dim-input{font-size:17px}.row-foot{flex-wrap:wrap}}
 @media print{body{background:white;color:#111}.wrap{max-width:none;padding:0}.top,.hero p,.mode,.no-print,.delete,.add,.toolbar,.import-details,.footer,.row-note::placeholder{display:none!important}.summary{position:static;background:white;color:#111;box-shadow:none;border:1px solid #bbb;padding:10px;margin-bottom:12px}.summary-label,.summary-side{color:#111}.card{box-shadow:none;border-color:#bbb;break-inside:avoid;padding:12px}.widths,.dim-input,.field input,.row-note{border:0;padding:0;color:#111;box-shadow:none!important;resize:none;min-height:0}.widths{font-size:12pt;min-height:0;overflow:visible}.hero h1{font-size:18pt}.row-foot strong{color:#111}.settings{grid-template-columns:1fr 100px}.card h2{font-size:13pt}}
+
+/* Einzig die Druck-/PDF-Ansicht wird sortiert. Die Erfassungsreihenfolge bleibt erhalten. */
+.print-sheet{display:none}
+@page{size:A4;margin:13mm 12mm}
+@media print{
+ html,body{background:white!important;color:#111!important;font-family:Arial,sans-serif}
+ .wrap{max-width:none!important;padding:0!important}
+ .wrap > :not(#print-sheet){display:none!important}
+ #print-sheet{display:block!important;font-size:10pt;line-height:1.35}
+ .print-header{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:11px;border-bottom:2px solid #286f33;margin-bottom:13px;gap:14px}
+ .print-brand{font-size:19pt;font-weight:800;letter-spacing:.01em;color:#173b23}
+ .print-heading{font-size:15pt;font-weight:700;margin:4px 0 3px}
+ .print-muted{color:#505a52;font-size:9pt}
+ .print-date{text-align:right;white-space:nowrap;font-size:9pt;color:#333}
+ #print-sheet table{width:100%;border-collapse:collapse;font-size:9.5pt;font-variant-numeric:tabular-nums}
+ #print-sheet thead{display:table-header-group}
+ #print-sheet th{background:#eaf2ea;border-bottom:1px solid #9ba99c;padding:7px 6px;text-align:right;font-weight:700;white-space:nowrap}
+ #print-sheet th:first-child,#print-sheet td:first-child{text-align:left}
+ #print-sheet td{padding:6px;border-bottom:1px solid #d4ddd5;text-align:right;vertical-align:top}
+ #print-sheet .print-note{text-align:left;overflow-wrap:anywhere;max-width:120px}
+ #print-sheet tr{break-inside:avoid}
+ #print-sheet tbody tr:nth-child(even){background:#f7faf7}
+ #print-sheet tfoot td{padding:9px 6px;border-top:2px solid #286f33;border-bottom:0;font-weight:800;background:#edf5ed}
+ .print-subtotal{display:flex;justify-content:space-between;gap:15px;margin-top:14px;font-size:10.5pt}
+ .print-subtotal b{font-size:14pt}
+ .print-bottom{margin-top:14px;padding-top:8px;border-top:1px solid #ccd7cd;color:#515a53;font-size:8pt}
+}
 </style>
 </head>
 <body>
@@ -29,8 +56,13 @@
 <div id="entries"></div>
 <button id="add-row" class="btn add no-print" type="button">+ Nächste Länge erfassen</button>
 <section class="card import-details no-print"><details id="bulk-details"><summary>Komplette handschriftliche Liste auf einmal eingeben</summary><p>Eine Zeile je Länge, dahinter die Breiten mit <code>/</code>, Komma oder Leerzeichen trennen. Beispiel:</p><textarea id="bulk-input" class="import-text" placeholder="4,50 x 40 / 30 / 25 / 30 / 40 / 40 / 40&#10;4,00 x 30 / 35 / 38 / 70&#10;3,35 x 70 / 40 / 40 / 20 / 20 / 20" spellcheck="false"></textarea><div class="import-controls"><button class="btn btn-primary" id="bulk-add" type="button">Zeilen übernehmen</button><span class="tiny" id="bulk-message" role="status"></span></div></details></section>
-<section class="card no-print"><div class="card-head"><h2>Ergebnis sichern</h2><span class="sub">Für Büro und Baustelle</span></div><div class="toolbar"><button class="btn btn-secondary" id="csv" type="button">CSV exportieren</button><button class="btn btn-secondary" id="print" type="button">Drucken / PDF</button><button class="btn btn-secondary" id="backup" type="button">Sicherung (JSON)</button><button class="btn btn-secondary" id="restore" type="button">Sicherung öffnen</button><button class="btn btn-danger" id="clear" type="button">Neue Liste beginnen</button></div><input id="restore-file" type="file" accept=".json,application/json" hidden><p class="status" id="status" role="status"></p></section>
-<p class="footer">Breiten standardmäßig in <b>cm</b>, Längen in <b>m</b>, Stärke in <b>mm</b>. Beispielsweise bedeutet „40, 30, 25“ drei Bohlen. <b>40x3</b> erfasst drei gleich breite Bohlen. Für Breiten mit Nachkommastelle einen Punkt verwenden (z. B. 32.5). Änderungen werden nur auf diesem Gerät im Browser gespeichert. Bestehende Daten der vorherigen Version werden beim ersten Öffnen übernommen; deren Originalspeicher bleibt unangetastet.<br>HolzOptiX Mobil · Version 2.0 · <a href="./aktualisieren.html">Offline-Version aktualisieren</a></p>
+<section class="card no-print"><div class="card-head"><h2>Ergebnis sichern</h2><span class="sub">Für Büro und Baustelle</span></div><div class="toolbar"><button class="btn btn-secondary" id="csv" type="button">CSV exportieren</button><button class="btn btn-secondary" id="print" type="button">Sortiert drucken / PDF</button><button class="btn btn-secondary" id="backup" type="button">Sicherung (JSON)</button><button class="btn btn-secondary" id="restore" type="button">Sicherung öffnen</button><button class="btn btn-danger" id="clear" type="button">Neue Liste beginnen</button></div><p class="note">Nur der Ausdruck wird sortiert: kurze Längen zuerst, bei gleicher Länge schmale Breiten zuerst. Deine Eingaben bleiben in der ursprünglichen Reihenfolge.</p><input id="restore-file" type="file" accept=".json,application/json" hidden><p class="status" id="status" role="status"></p></section>
+<p class="footer">Breiten standardmäßig in <b>cm</b>, Längen in <b>m</b>, Stärke in <b>mm</b>. Beispielsweise bedeutet „40, 30, 25“ drei Bohlen. <b>40x3</b> erfasst drei gleich breite Bohlen. Für Breiten mit Nachkommastelle einen Punkt verwenden (z. B. 32.5). Änderungen werden nur auf diesem Gerät im Browser gespeichert. Bestehende Daten der vorherigen Version werden beim ersten Öffnen übernommen; deren Originalspeicher bleibt unangetastet.<br>HolzOptiX Mobil · Version 2.1 · <a href="./aktualisieren.html">Offline-Version aktualisieren</a></p>
+<section id="print-sheet" class="print-sheet" aria-label="Sortierte Druckliste">
+<div class="print-header"><div><div class="print-brand">HolzOptiX</div><div class="print-heading">Bohlenliste</div><div class="print-muted" id="print-project"></div><div class="print-muted">Sortiert: Länge kurz → lang, Breite schmal → breit</div></div><div class="print-date" id="print-date"></div></div>
+<table><thead><tr><th>Länge (m)</th><th>Breite (cm)</th><th>Stärke (mm)</th><th>Anzahl</th><th>Volumen (m³)</th><th class="print-note">Notiz</th></tr></thead><tbody id="print-rows"></tbody><tfoot><tr><td colspan="3">Gesamt</td><td id="print-qty"></td><td id="print-sum"></td><td></td></tr></tfoot></table>
+<div class="print-bottom">Alle Maße und Mengen sind aus den erfassten Bohlen berechnet. Gleiche Maße und Stärken sind zusammengefasst.</div>
+</section>
 </div>
 <template id="entry-template"><article class="card entry"><div class="row-top"><span class="row-index">LÄNGE 01</span><button type="button" class="delete no-print" aria-label="Längenreihe löschen">Entfernen</button></div><div class="dims"><label class="dim-label">Länge<div class="dim-wrap"><input class="dim-input length" type="text" inputmode="decimal" placeholder="4,50" autocomplete="off"><span class="suffix">m</span></div></label><label class="dim-label">Stärke<div class="dim-wrap"><input class="dim-input thick" type="text" inputmode="decimal" placeholder="40" autocomplete="off"><span class="suffix">mm</span></div></label></div><div class="input-block"><label>Bohlenbreiten (cm) – einfach hintereinander</label><textarea class="widths" rows="2" inputmode="decimal" placeholder="40, 30, 25, 30, 40, 40, 40" spellcheck="false"></textarea></div><div class="invalid" hidden></div><div class="row-foot"><small class="count">0 Bohlen</small><strong class="volume">0,0000 m³</strong></div><input class="row-note no-print" type="text" maxlength="90" placeholder="Notiz für diese Länge (optional)" autocomplete="off"></article></template>
 <script>
@@ -68,7 +100,48 @@ function csvCell(x){let text=String(x??'');if(/^[\s]*[=+@\-]/.test(text))text="'
 function download(text,filename,type){const blob=new Blob([text],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)}
 function filename(suffix){const name=(state.project.trim()||'HolzOptiX-Kubikmeter').replace(/[^a-zA-Z0-9äöüÄÖÜß\-_ ]/g,'').trim().replace(/\s+/g,'-').slice(0,45)||'HolzOptiX-Kubikmeter';return name+'-'+suffix}
 $('csv').addEventListener('click',()=>{const rows=liveRows();if(!rows.length){$('status').textContent='Keine gültigen Bohlen zum Exportieren.';return}const lines=[['Auftrag','Länge (m)','Stärke (mm)','Breite (cm)','Stück','Volumen (m³)','Notiz']];let sum=0,qty=0;for(const r of rows){const c=calc(r),length=num(r.length),thick=num(r.thick);for(const w of c.widths){const v=length*thick*w/100000;lines.push([state.project,length.toFixed(4).replace('.',','),thick.toFixed(3).replace('.',','),w.toFixed(3).replace('.',','),1,v.toFixed(6).replace('.',','),r.note]);sum+=v;qty++}}lines.push(['SUMME','','','',qty,sum.toFixed(6).replace('.',','),'']);download('\ufeff'+lines.map(a=>a.map(csvCell).join(';')).join('\r\n'),filename('Bohlenliste.csv'),'text/csv;charset=utf-8');$('status').textContent='CSV wurde erstellt.'});
-$('print').addEventListener('click',()=>window.print());
+
+// Druckliste ausschließlich aus den gültigen erfassten Bohlen erstellen.
+// Niemals die Reihenfolge oder Daten im gespeicherten state verändern.
+function buildSortedPrintRows(){
+  const pieces=[];
+  for(const r of liveRows()){
+    const length=num(r.length),thick=num(r.thick),c=calc(r);
+    for(const width of c.widths){
+      pieces.push({length,width,thick,note:(r.note||'').trim()});
+    }
+  }
+  // 1. Länge aufsteigend, 2. Breite aufsteigend, 3. Stärke aufsteigend.
+  pieces.sort((a,b)=>a.length-b.length||a.width-b.width||a.thick-b.thick||a.note.localeCompare(b.note,'de'));
+  const grouped=[];
+  for(const p of pieces){
+    const last=grouped[grouped.length-1];
+    if(last && last.length===p.length && last.width===p.width && last.thick===p.thick && last.note===p.note){last.qty++}
+    else grouped.push({...p,qty:1});
+  }
+  return grouped;
+}
+function updatePrintable(){
+  const rows=buildSortedPrintRows();
+  $('print-project').textContent=state.project.trim()||'Ohne Auftragsbezeichnung';
+  $('print-date').textContent=new Date().toLocaleDateString('de-DE',{year:'numeric',month:'2-digit',day:'2-digit'});
+  const body=$('print-rows');body.replaceChildren();
+  let qty=0,volume=0;
+  if(!rows.length){const tr=document.createElement('tr'),td=document.createElement('td');td.colSpan=6;td.textContent='Keine gültigen Bohlen erfasst.';tr.append(td);body.append(tr)}
+  for(const r of rows){
+    const v=r.length*r.thick*r.width*r.qty/100000;
+    qty+=r.qty;volume+=v;
+    const tr=document.createElement('tr');
+    const fmtLength=n=>new Intl.NumberFormat('de-DE',{minimumFractionDigits:2,maximumFractionDigits:3}).format(n);
+    const cells=[fmtLength(r.length),fmtN(r.width),fmtN(r.thick),fmtN(r.qty),fmtV(v),r.note];
+    for(let i=0;i<cells.length;i++){const td=document.createElement('td');td.textContent=cells[i];if(i===5)td.className='print-note';tr.append(td)}
+    body.append(tr);
+  }
+  $('print-qty').textContent=fmtN(qty);
+  $('print-sum').textContent=fmtV(volume);
+}
+window.addEventListener('beforeprint',updatePrintable);
+$('print').addEventListener('click',()=>{updatePrintable();window.print()});
 $('backup').addEventListener('click',()=>{download(JSON.stringify({...state,exportedAt:new Date().toISOString()},null,2),filename('Sicherung.json'),'application/json');$('status').textContent='JSON-Sicherung wurde erstellt.'});
 $('restore').addEventListener('click',()=>$('restore-file').click());
 $('restore-file').addEventListener('change',async e=>{const file=e.target.files[0];e.target.value='';if(!file)return;try{if(file.size>3e6)throw Error('Datei zu groß');const obj=JSON.parse(await file.text());if(obj.version!==2||!Array.isArray(obj.rows)||obj.rows.length>1000)throw Error('Unbekanntes Format');const next={version:2,project:String(obj.project||'').slice(0,120),defaultThick:String(obj.defaultThick||'40').slice(0,20),rows:obj.rows.map(cleanRow).filter(Boolean)};if(!confirm('Aktuelle Liste durch diese Sicherung ersetzen?'))return;state=next;refreshFields();draw();save();$('status').textContent='Sicherung geladen.'}catch(e){$('status').textContent='Sicherung konnte nicht geöffnet werden.'}});
@@ -77,7 +150,7 @@ let dark=false;try{let theme=JSON.parse(localStorage.getItem(THEME));dark=theme=
 function setTheme(v){dark=v;document.documentElement.dataset.theme=v?'dark':'light';$('theme-btn').textContent=v?'☀ Hell':'☾ Dunkel';try{localStorage.setItem(THEME,JSON.stringify(v?'dark':'light'))}catch(e){}}
 $('theme-btn').addEventListener('click',()=>setTheme(!dark));
 restoreLoaded();refreshFields();draw();save();setTheme(dark);
-if('serviceWorker' in navigator && location.protocol.startsWith('http'))window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js?v=2.0.0',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{});let refreshing=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload()}})});
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js?v=2.1.0',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{});let refreshing=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload()}})});
 })();
 </script>
 </body>
