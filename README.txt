@@ -1,4 +1,4 @@
-HOLZOPTIX MOBIL – KUBIKMETER-SCHNELLERFASSUNG V2.5
+HOLZOPTIX MOBIL – KUBIKMETER-SCHNELLERFASSUNG V2.6
 
 GitHub Pages bleibt unverändert:
 https://test-low.github.io/Holz-Rechner/
@@ -9,7 +9,17 @@ des bestehenden GitHub-Repositories test-low/Holz-Rechner hochladen,
 vorhandene Dateien ersetzen und Commit changes wählen.
 Wenn noch die alte Fassung zu sehen ist: .../aktualisieren.html öffnen.
 
-NEU IN V2.5 – DRUCKEN AUF DEM HANDY:
+NEU IN V2.6 – EIGENE ZAHLENTASTATUR FÜR DAS HANDY:
+- Für Stärke, Länge, Bohlenbreiten und die komplette Zahlenliste.
+- Das Handy zeigt dort nicht mehr die normale Systemtastatur.
+- Große Tasten für Zahlen, Komma/Punkt, x für Stückzahl, Leer, Löschen,
+  Zurück und Weiter zum nächsten Eingabefeld bzw. zur nächsten Länge.
+- Für Bohlenbreiten werden Dezimalwerte weiterhin mit Punkt getrennt.
+- Auftrag und Notizen nutzen die normale Texteingabe.
+- Am PC bleiben alle Eingaben mit der normalen Tastatur bedienbar.
+- Die Funktion ist für kleine Touch-Displays vorgesehen.
+
+DRUCKEN AUF DEM HANDY (seit V2.5):
 - „Sortiert drucken“ öffnet am Handy eine fertige, sortierte PDF.
 - Wenn der mobile Browser das Öffnen verhindert, erscheinen deutlich
   sichtbare Links „PDF zum Drucken öffnen“ und „PDF speichern“.
@@ -49,3 +59,5 @@ HINWEIS: Die erzeugte PDF enthält absichtlich keinen Produktnamen.
 Die normale Browser-Druckfunktion kann je nach Browser eigene Kopf-
 und Fußzeilen hinzufügen. Für URL-freies Drucken den direkten PDF-
 Export benutzen. Die URL ändert sich NICHT durch dieses Update.
+
+WICHTIG: Neue Version über dasselbe GitHub-Pages-Repository veröffentlichen.

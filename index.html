@@ -80,6 +80,28 @@
  .print-subtotal{display:flex;justify-content:space-between;gap:15px;margin-top:14px;font-size:10.5pt}
  .print-subtotal b{font-size:14pt}
 }
+
+/* Mobile Zahlentastatur: ausschließlich für numerische Eingabefelder. */
+.custom-keypad[hidden]{display:none!important}
+.custom-keypad{position:fixed;z-index:40;left:0;right:0;bottom:0;margin:auto;width:100%;max-width:520px;background:var(--card);border:1px solid var(--line);border-radius:18px 18px 0 0;box-shadow:0 -12px 45px #06170835;padding:10px 12px calc(10px + env(safe-area-inset-bottom));touch-action:manipulation}
+.keypad-heading{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 0 8px}
+.keypad-heading strong{font-size:13px;color:var(--ink)}
+.keypad-hint{font-size:11px;color:var(--muted);margin:0 0 8px}
+.keypad-close{border:1px solid var(--line);background:var(--card2);color:var(--ink);border-radius:9px;padding:7px 13px;min-height:34px;font-size:12px;font-weight:730}
+.keypad-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.keypad-key{display:flex;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:11px;background:var(--card2);color:var(--ink);font-weight:750;font-size:21px;min-height:47px;line-height:1;padding:6px;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.keypad-key:active{background:var(--light);border-color:var(--primary)}
+.keypad-key.key-special{font-size:15px}
+.keypad-key.key-multiply{background:var(--light);color:var(--primary);font-size:25px}
+.keypad-key.key-next{background:#2f7d3a;color:#fff;border-color:#2f7d3a;font-size:15px}
+.keypad-key:disabled{opacity:.36;cursor:not-allowed}
+@media(pointer:coarse) and (max-width:800px){
+ body.custom-keypad-open .wrap{padding-bottom:430px!important}
+ body.custom-keypad-open .mobile-dock{display:none!important}
+ body.custom-keypad-open input[data-custom-number],body.custom-keypad-open textarea[data-custom-number]{caret-color:var(--primary)}
+}
+@media(max-height:650px){.keypad-key{min-height:40px}.custom-keypad{padding-top:7px}.keypad-heading{margin-bottom:4px}.keypad-hint{margin-bottom:5px}}
+@media print{.custom-keypad{display:none!important}}
 </style>
 </head>
 <body>
@@ -102,7 +124,7 @@
   </div>
 </div>
 <p class="note">Auf dem Handy öffnet „Sortiert drucken“ die sortierte PDF zum anschließenden Drucken. Alternativ „PDF ohne Internetadresse“ wählen und die Datei drucken. Eingaben bleiben unsortiert, der Ausdruck ist nach Länge und Breite sortiert und enthält Zwischensummen je Länge.</p><p class="backup-detail"><b>Sicherung:</b> Die JSON-Datei enthält deinen Auftrag und alle Eingaben. Zum Übertragen auf ein anderes Handy dort „Sicherung öffnen“ wählen. Vor dem Ersetzen wird nachgefragt; die Änderung kann direkt rückgängig gemacht werden.</p><input id="restore-file" type="file" accept=".json,application/json" hidden><p class="status" id="status" role="status"></p></section>
-<p class="footer">Breiten standardmäßig in <b>cm</b>, Längen in <b>m</b>, Stärke in <b>mm</b>. Beispielsweise bedeutet „40 30 25“ drei Bohlen. <b>40x3</b> erfasst drei gleich breite Bohlen. Für Breiten mit Nachkommastelle einen Punkt verwenden (z. B. 32.5). Änderungen werden nur auf diesem Gerät im Browser gespeichert. Bestehende Daten der vorherigen Version werden beim ersten Öffnen übernommen; deren Originalspeicher bleibt unangetastet.<br>HolzOptiX Mobil · Version 2.5 · <a href="./aktualisieren.html">Offline-Version aktualisieren</a></p>
+<p class="footer">Breiten standardmäßig in <b>cm</b>, Längen in <b>m</b>, Stärke in <b>mm</b>. Beispielsweise bedeutet „40 30 25“ drei Bohlen. <b>40x3</b> erfasst drei gleich breite Bohlen. Für Breiten mit Nachkommastelle einen Punkt verwenden (z. B. 32.5). Änderungen werden nur auf diesem Gerät im Browser gespeichert. Bestehende Daten der vorherigen Version werden beim ersten Öffnen übernommen; deren Originalspeicher bleibt unangetastet.<br>HolzOptiX Mobil · Version 2.6 · <a href="./aktualisieren.html">Offline-Version aktualisieren</a></p>
 <section id="print-sheet" class="print-sheet" aria-label="Sortierte Druckliste">
 <div class="print-header"><div><div class="print-heading">Bohlenliste</div><div class="print-muted" id="print-project"></div><div class="print-muted">Sortiert: Länge kurz → lang, Breite schmal → breit</div></div><div class="print-date" id="print-date"></div></div>
 <table><thead><tr><th>Länge (m)</th><th>Breite (cm)</th><th>Stärke (mm)</th><th>Anzahl</th><th>Volumen (m³)</th><th class="print-note">Notiz</th></tr></thead><tbody id="print-rows"></tbody><tfoot><tr><td colspan="3">Gesamt</td><td id="print-qty"></td><td id="print-sum"></td><td></td></tr></tfoot></table>
@@ -111,6 +133,11 @@
 </div>
 <div class="mobile-dock no-print" aria-label="Schnellzugriff"><div><span class="dock-label">GESAMTVOLUMEN</span><span class="dock-total" id="dock-volume">0,0000 m³</span></div><button id="dock-add" type="button">+ Neue Länge</button></div>
 <template id="entry-template"><article class="card entry"><div class="row-top"><span class="row-index">LÄNGE 01</span><button type="button" class="delete no-print" aria-label="Längenreihe löschen">Entfernen</button></div><div class="dims"><label class="dim-label">Länge<div class="dim-wrap"><input class="dim-input length" type="text" inputmode="decimal" placeholder="4,50" autocomplete="off"><span class="suffix">m</span></div></label><label class="dim-label">Stärke<div class="dim-wrap"><input class="dim-input thick" type="text" inputmode="decimal" placeholder="40" autocomplete="off"><span class="suffix">mm</span></div></label></div><div class="input-block"><label>Bohlenbreiten (cm) – einfach hintereinander</label><textarea class="widths" rows="2" inputmode="text" placeholder="40 30 25 40x5 35x2" spellcheck="false" aria-label="Bohlenbreiten in Zentimetern"></textarea><p class="input-help">Beliebige Reihenfolge: <b>40 30 25 40x5 35x2</b> · Leerzeichen, Komma, / oder neue Zeile.</p><div class="width-feedback" aria-live="off">0 gültige Breiten</div></div><div class="invalid" hidden></div><div class="row-foot"><small class="count">0 Bohlen</small><strong class="volume">0,0000 m³</strong></div><input class="row-note no-print" type="text" maxlength="90" placeholder="Notiz für diese Länge (optional)" autocomplete="off"><div class="quick-row no-print"><button type="button" class="btn btn-secondary next-length">+ Weitere Länge</button></div></article></template>
+<section id="custom-keypad" class="custom-keypad no-print" aria-label="Zahlentastatur" hidden>
+  <div class="keypad-heading"><strong id="keypad-title">Zahleneingabe</strong><button type="button" id="keypad-close" class="keypad-close">Fertig ✕</button></div>
+  <p class="keypad-hint" id="keypad-hint">Maße direkt eingeben.</p>
+  <div class="keypad-grid" id="keypad-grid" role="group" aria-label="Zahlen und Eingabehilfen"></div>
+</section>
 <script>
 (()=>{'use strict';
 const $=id=>document.getElementById(id);
@@ -154,16 +181,146 @@ function fmtDecimal(v){return Number(v.toFixed(7)).toString()}
 const entryNodes=new Map();
 function renderSummary(){let total=0,pieces=0,active=0;for(const r of state.rows){const c=calc(r);total+=c.volume;pieces+=c.count;if(c.count)active++} $('sum-volume').textContent=fmtV(total)+' m³';$('sum-pieces').textContent=fmtN(pieces);$('sum-lines').textContent=fmtN(active)+' Längen';$('dock-volume').textContent=fmtV(total)+' m³';}
 function renderRowTotals(r,el){const c=calc(r);el.querySelector('.count').textContent=fmtN(c.count)+' '+(c.count===1?'Bohle':'Bohlen');el.querySelector('.volume').textContent=fmtV(c.volume)+' m³';el.querySelector('.width-feedback').textContent=fmtN(c.widths.length)+' '+(c.widths.length===1?'eingegebene Breite':'eingegebene Breiten')+(c.errors.length?' · Eingabe prüfen':'');const error=el.querySelector('.invalid');if(c.errors.length){error.hidden=false;error.textContent='Bitte prüfen: '+c.errors.slice(0,4).join(', ')+(c.errors.length>4?' …':'')+'. Ungültige Werte werden nicht berechnet.'}else{error.hidden=true;error.textContent=''} }
-function mount(r){let el=$('entry-template').content.firstElementChild.cloneNode(true);entryNodes.set(r.id,el);el.dataset.id=r.id;el.querySelector('.length').value=r.length;el.querySelector('.thick').value=r.thick;el.querySelector('.widths').value=r.widths;el.querySelector('.row-note').value=r.note;for(const [cls,key] of [['length','length'],['thick','thick'],['widths','widths'],['row-note','note']]){{const field=el.querySelector('.'+cls);trackInputStart(field);field.addEventListener('input',e=>{r[key]=e.target.value;if(key==='widths')fitWidths(e.target);renderRowTotals(r,el);renderSummary();save()})}}el.querySelector('.delete').addEventListener('click',()=>{pushUndo();if(state.rows.length===1){r.length='';r.widths='';r.note='';el.querySelector('.length').value='';el.querySelector('.widths').value='';el.querySelector('.row-note').value='';renderRowTotals(r,el);renderSummary();save();return}state.rows=state.rows.filter(v=>v.id!==r.id);el.remove();entryNodes.delete(r.id);renumber();renderSummary();save()});el.querySelector('.next-length').addEventListener('click',()=>addRow());el.querySelector('.length').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();el.querySelector('.widths').focus()}});fitWidths(el.querySelector('.widths'));renderRowTotals(r,el);return el}
+function mount(r){let el=$('entry-template').content.firstElementChild.cloneNode(true);entryNodes.set(r.id,el);el.dataset.id=r.id;el.querySelector('.length').value=r.length;el.querySelector('.thick').value=r.thick;el.querySelector('.widths').value=r.widths;el.querySelector('.row-note').value=r.note;for(const [cls,key] of [['length','length'],['thick','thick'],['widths','widths'],['row-note','note']]){{const field=el.querySelector('.'+cls);enableCustomKeypadField(field);trackInputStart(field);field.addEventListener('input',e=>{r[key]=e.target.value;if(key==='widths')fitWidths(e.target);renderRowTotals(r,el);renderSummary();save()})}}el.querySelector('.delete').addEventListener('click',()=>{pushUndo();if(state.rows.length===1){r.length='';r.widths='';r.note='';el.querySelector('.length').value='';el.querySelector('.widths').value='';el.querySelector('.row-note').value='';renderRowTotals(r,el);renderSummary();save();return}state.rows=state.rows.filter(v=>v.id!==r.id);el.remove();entryNodes.delete(r.id);renumber();renderSummary();save()});el.querySelector('.next-length').addEventListener('click',()=>addRow());el.querySelector('.length').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();el.querySelector('.widths').focus()}});fitWidths(el.querySelector('.widths'));renderRowTotals(r,el);return el}
 function fitWidths(el){if(!el)return;el.style.height='auto';el.style.height=Math.min(280,Math.max(100,el.scrollHeight+2))+'px'}
 function renumber(){state.rows.forEach((r,i)=>{const el=entryNodes.get(r.id);if(el)el.querySelector('.row-index').textContent='LÄNGE '+String(i+1).padStart(2,'0')})}
 function draw(){entryNodes.clear();$('entries').replaceChildren();if(!state.rows.length)state.rows.push({id:id(),length:'',thick:state.defaultThick,widths:'',note:''});for(const r of state.rows)$('entries').append(mount(r));renumber();renderSummary()}
 function addRow(length='',widths='',thick=state.defaultThick,note='',focus=true,recordHistory=true){if(state.rows.length>=1000){$('status').textContent='Maximal 1000 Längenreihen.';return}if(recordHistory)pushUndo();const r={id:id(),length,thick,widths,note};state.rows.push(r);const el=mount(r);$('entries').append(el);renumber();renderSummary();save();if(focus){ignoreNextFocus=true;el.querySelector('.length').focus();el.scrollIntoView({behavior:'smooth',block:'center'})}return r}
+// Angepasste Zifferntastatur für Smartphones: verhindert die Systemtastatur.
+// Textfelder (Auftrag/Notiz) und Desktop-Eingabe bleiben unverändert.
+const mobileNumberPad=window.matchMedia('(pointer: coarse) and (max-width: 800px)').matches;
+const numericFieldSelector='#default-thick, .length, .thick, .widths, #bulk-input';
+let activeNumberField=null;
+const numberPad=$('custom-keypad');
+const numberGrid=$('keypad-grid');
+const numberPadKeys=['1','2','3','4','5','6','7','8','9','decimal','0','multiply','space','backspace','next'];
+function enableCustomKeypadField(field){
+ if(!field||!mobileNumberPad||!field.matches(numericFieldSelector))return;
+ // iOS/Android: readOnly unterdrückt die Systemtastatur; programmgesteuerte Eingabe bleibt möglich.
+ field.readOnly=true;field.setAttribute('inputmode','none');field.dataset.customNumber='1';
+}
+function numberFieldMode(field){
+ if(field.matches('.widths'))return 'widths';
+ if(field.matches('#bulk-input'))return 'bulk';
+ return 'number';
+}
+function numberFieldTitle(field){
+ if(field.id==='default-thick')return 'Stärke (mm)';
+ if(field.matches('.length'))return 'Länge (m)';
+ if(field.matches('.thick'))return 'Stärke (mm)';
+ if(field.matches('.widths'))return 'Bohlenbreiten (cm)';
+ return 'Komplette Liste';
+}
+function keypadLayout(mode){
+ return numberPadKeys.map(key=>{
+  let text=key,disabled=false;
+  if(key==='decimal')text=mode==='widths'?'.':',';
+  if(key==='multiply'){text='×';disabled=mode==='number'}
+  if(key==='space'){text=mode==='number'?'Löschen':'Leer'}
+  if(key==='backspace')text='⌫';
+  if(key==='next')text='Weiter →';
+  return {key,text,disabled};
+ });
+}
+function scrollNumberFieldIntoView(field){
+ requestAnimationFrame(()=>{
+  if(activeNumberField!==field||numberPad.hidden)return;
+  const rect=field.getBoundingClientRect();
+  const maxBottom=window.innerHeight-numberPad.getBoundingClientRect().height-13;
+  if(rect.bottom>maxBottom)window.scrollBy({top:rect.bottom-maxBottom+8,behavior:'smooth'});
+  else if(rect.top<65)window.scrollBy({top:rect.top-80,behavior:'smooth'});
+ });
+}
+function showNumberPad(field){
+ if(!mobileNumberPad||!field?.matches?.(numericFieldSelector))return;
+ enableCustomKeypadField(field);
+ activeNumberField=field;
+ const mode=numberFieldMode(field);
+ $('keypad-title').textContent=numberFieldTitle(field);
+ $('keypad-hint').textContent=mode==='widths'?'Leerzeichen trennt Bohlen · × für Stückzahl (40×5) · Punkt für Dezimalbreiten':mode==='bulk'?'Komma für Dezimalstellen · × zwischen Länge und Breiten · Leer für Trennung':'Komma für Dezimalstellen · Weiter springt zum nächsten Eingabefeld';
+ numberGrid.replaceChildren();
+ (mode==='bulk'?[...keypadLayout(mode),{key:'newline',text:'↵ Neue Zeile',disabled:false}]:keypadLayout(mode)).forEach(({key,text,disabled})=>{
+  const b=document.createElement('button');b.type='button';b.className='keypad-key'+(key==='multiply'?' key-multiply':key==='next'?' key-next':!['0','1','2','3','4','5','6','7','8','9'].includes(key)?' key-special':'');
+  b.dataset.key=key;b.textContent=text;b.disabled=disabled;if(key==='newline')b.style.gridColumn='1 / -1';b.setAttribute('aria-label',key==='backspace'?'Letztes Zeichen löschen':key==='multiply'?'Malzeichen für Stückzahl':text);
+  numberGrid.append(b);
+ });
+ numberPad.hidden=false;document.body.classList.add('custom-keypad-open');
+ scrollNumberFieldIntoView(field);
+}
+function hideNumberPad(){
+ if(!mobileNumberPad)return;
+ numberPad.hidden=true;document.body.classList.remove('custom-keypad-open');
+ const old=activeNumberField;activeNumberField=null;
+ if(old&&document.activeElement===old)old.blur();
+}
+function mutateNumberField(field,replacement,start,end){
+ if(!field)return;
+ const max=field.maxLength>0?field.maxLength:Infinity;
+ const newLength=field.value.length-(end-start)+replacement.length;
+ if(newLength>max)return;
+ field.setRangeText(replacement,start,end,'end');
+ field.dispatchEvent(new Event('input',{bubbles:true}));
+}
+function numberPadPress(key){
+ const field=activeNumberField;
+ if(!field||!field.isConnected){hideNumberPad();return}
+ if(key==='next'){nextNumberField(field);return}
+ let start=field.selectionStart??field.value.length;
+ let end=field.selectionEnd??start;
+ if(key==='backspace'){
+  if(start===end&&start>0)start--;
+  mutateNumberField(field,'',start,end);return;
+ }
+ if(key==='space'&&numberFieldMode(field)==='number'){
+  // Auf Maßfeldern löscht die Extrataste den gesamten Wert.
+  mutateNumberField(field,'',0,field.value.length);return;
+ }
+ let piece=key==='multiply'?'x':key==='space'?' ':key==='newline'?'\n':key==='decimal'?(numberFieldMode(field)==='widths'?'.':','):key;
+ if(key==='space'&&start===end&&start>0&&/\s/.test(field.value[start-1]))return;
+ mutateNumberField(field,piece,start,end);
+}
+function nextNumberField(field){
+ if(field.id==='default-thick'){
+  const next=document.querySelector('#entries .length');if(next){next.focus({preventScroll:true});showNumberPad(next)}else hideNumberPad();return;
+ }
+ if(field.matches('.length,.thick')){
+  const next=field.closest('.entry')?.querySelector('.widths');if(next){next.focus({preventScroll:true});showNumberPad(next)}else hideNumberPad();return;
+ }
+ if(field.matches('.widths')){
+  const entry=field.closest('.entry');const sibling=entry?.nextElementSibling;
+  let next=sibling?.querySelector('.length');
+  if(!next){
+   // Eine leere neue Zeile erst auf Wunsch durch „Weiter“ hinzufügen.
+   const newRow=addRow('', '',state.defaultThick,'',false,true);
+   next=newRow?entryNodes.get(newRow.id)?.querySelector('.length'):null;
+  }
+  if(next){next.focus({preventScroll:true});showNumberPad(next)}else hideNumberPad();return;
+ }
+ hideNumberPad();
+}
+if(mobileNumberPad){
+ document.addEventListener('focusin',e=>{
+  if(e.target.matches?.(numericFieldSelector))showNumberPad(e.target);
+  else if(activeNumberField&&!numberPad.contains(e.target))hideNumberPad();
+ });
+ document.addEventListener('click',e=>{
+  if(e.target.matches?.(numericFieldSelector)){showNumberPad(e.target);return}
+  if(e.target.closest?.('#add-row, #dock-add, .next-length'))return;
+  if(!numberPad.contains(e.target)&&activeNumberField)hideNumberPad();
+ });
+ // Verhindert Fokusverlust beim Tippen auf die Bildschirmtasten.
+ numberPad.addEventListener('pointerdown',e=>{if(e.target.closest('button'))e.preventDefault()});
+ numberGrid.addEventListener('click',e=>{e.stopPropagation();const button=e.target.closest('button[data-key]');if(button&&!button.disabled)numberPadPress(button.dataset.key)});
+ $('keypad-close').addEventListener('click',hideNumberPad);
+ // Falls eine Liste neu geladen wird, darf kein veralteter Feldverweis aktiv bleiben.
+ document.addEventListener('visibilitychange',()=>{if(document.hidden)hideNumberPad()});
+}
+
 function refreshFields(){$('project').value=state.project;$('default-thick').value=state.defaultThick}
 $('add-row').addEventListener('click',()=>addRow());$('dock-add').addEventListener('click',()=>addRow());$('undo').addEventListener('click',undo);
-trackInputStart($('project'));trackInputStart($('default-thick'));
+trackInputStart($('project'));trackInputStart($('default-thick'));enableCustomKeypadField($('default-thick'));enableCustomKeypadField($('bulk-input'));
 $('project').addEventListener('input',e=>{state.project=e.target.value;save()});
-$('default-thick').addEventListener('input',e=>{state.defaultThick=e.target.value;save()});
+$('default-thick').addEventListener('input',e=>{const previous=state.defaultThick;state.defaultThick=e.target.value;for(const r of state.rows){if(!r.length.trim()&&!r.widths.trim()&&r.thick===previous){r.thick=state.defaultThick;const element=entryNodes.get(r.id);if(element)element.querySelector('.thick').value=r.thick}}renderSummary();save()});
 $('bulk-add').addEventListener('click',()=>{const lines=$('bulk-input').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);let parsed=[],errors=[];for(let i=0;i<lines.length;i++){const m=lines[i].match(/^(\d+(?:[,.]\d+)?)\s*(?:m)?\s*[x×*]\s*(.+)$/i);if(!m||!num(m[1])||!parseWidths(m[2]).values.length||parseWidths(m[2]).bad.length){errors.push(i+1);continue}parsed.push({len:m[1],widths:m[2]})}if(errors.length){$('bulk-message').textContent='Zeile(n) '+errors.join(', ')+' prüfen – nichts übernommen.';return}if(!parsed.length){$('bulk-message').textContent='Bitte zuerst eine Liste eingeben.';return}if(parsed.length+state.rows.length>1000){$('bulk-message').textContent='Zu viele Längenreihen.';return}pushUndo();if(state.rows.length===1&&!state.rows[0].length.trim()&&!state.rows[0].widths.trim()){state.rows=[];entryNodes.clear();$('entries').replaceChildren()}for(const p of parsed)addRow(p.len,p.widths,state.defaultThick,'',false,false);$('bulk-input').value='';$('bulk-message').textContent=fmtN(parsed.length)+' Längen übernommen.';renderSummary();save()});
 function liveRows(){return state.rows.filter(r=>calc(r).count>0)}
 function csvCell(x){let text=String(x??'');if(/^[\s]*[=+@\-]/.test(text))text="'"+text;return '"'+text.replace(/"/g,'""')+'"'}
@@ -390,7 +547,7 @@ let dark=false;try{let theme=JSON.parse(localStorage.getItem(THEME));dark=theme=
 function setTheme(v){dark=v;document.documentElement.dataset.theme=v?'dark':'light';$('theme-btn').textContent=v?'☀ Hell':'☾ Dunkel';try{localStorage.setItem(THEME,JSON.stringify(v?'dark':'light'))}catch(e){}}
 $('theme-btn').addEventListener('click',()=>setTheme(!dark));
 restoreLoaded();refreshFields();draw();save();setTheme(dark);
-if('serviceWorker' in navigator && location.protocol.startsWith('http'))window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js?v=2.5.0',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{});let refreshing=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload()}})});
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js?v=2.6.0',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{});let refreshing=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload()}})});
 })();
 </script>
 </body>
