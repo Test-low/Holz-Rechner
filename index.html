@@ -20,14 +20,14 @@
 
 /* Einzig die Druck-/PDF-Ansicht wird sortiert. Die Erfassungsreihenfolge bleibt erhalten. */
 .print-sheet{display:none}
-@page{size:A4;margin:13mm 12mm}
+/* Ohne Seitenrand druckt Chromium seine automatische URL/Datumszeile normalerweise nicht. */
+@page{size:A4;margin:0}
 @media print{
  html,body{background:white!important;color:#111!important;font-family:Arial,sans-serif}
  .wrap{max-width:none!important;padding:0!important}
  .wrap > :not(#print-sheet){display:none!important}
- #print-sheet{display:block!important;font-size:10pt;line-height:1.35}
+ #print-sheet{display:block!important;font-size:10pt;line-height:1.35;padding:13mm 12mm}
  .print-header{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:11px;border-bottom:2px solid #286f33;margin-bottom:13px;gap:14px}
- .print-brand{font-size:19pt;font-weight:800;letter-spacing:.01em;color:#173b23}
  .print-heading{font-size:15pt;font-weight:700;margin:4px 0 3px}
  .print-muted{color:#505a52;font-size:9pt}
  .print-date{text-align:right;white-space:nowrap;font-size:9pt;color:#333}
@@ -42,7 +42,6 @@
  #print-sheet tfoot td{padding:9px 6px;border-top:2px solid #286f33;border-bottom:0;font-weight:800;background:#edf5ed}
  .print-subtotal{display:flex;justify-content:space-between;gap:15px;margin-top:14px;font-size:10.5pt}
  .print-subtotal b{font-size:14pt}
- .print-bottom{margin-top:14px;padding-top:8px;border-top:1px solid #ccd7cd;color:#515a53;font-size:8pt}
 }
 </style>
 </head>
@@ -56,12 +55,12 @@
 <div id="entries"></div>
 <button id="add-row" class="btn add no-print" type="button">+ Nächste Länge erfassen</button>
 <section class="card import-details no-print"><details id="bulk-details"><summary>Komplette handschriftliche Liste auf einmal eingeben</summary><p>Eine Zeile je Länge, dahinter die Breiten mit <code>/</code>, Komma oder Leerzeichen trennen. Beispiel:</p><textarea id="bulk-input" class="import-text" placeholder="4,50 x 40 / 30 / 25 / 30 / 40 / 40 / 40&#10;4,00 x 30 / 35 / 38 / 70&#10;3,35 x 70 / 40 / 40 / 20 / 20 / 20" spellcheck="false"></textarea><div class="import-controls"><button class="btn btn-primary" id="bulk-add" type="button">Zeilen übernehmen</button><span class="tiny" id="bulk-message" role="status"></span></div></details></section>
-<section class="card no-print"><div class="card-head"><h2>Ergebnis sichern</h2><span class="sub">Für Büro und Baustelle</span></div><div class="toolbar"><button class="btn btn-secondary" id="csv" type="button">CSV exportieren</button><button class="btn btn-secondary" id="print" type="button">Sortiert drucken / PDF</button><button class="btn btn-secondary" id="backup" type="button">Sicherung (JSON)</button><button class="btn btn-secondary" id="restore" type="button">Sicherung öffnen</button><button class="btn btn-danger" id="clear" type="button">Neue Liste beginnen</button></div><p class="note">Nur der Ausdruck wird sortiert: kurze Längen zuerst, bei gleicher Länge schmale Breiten zuerst. Deine Eingaben bleiben in der ursprünglichen Reihenfolge.</p><input id="restore-file" type="file" accept=".json,application/json" hidden><p class="status" id="status" role="status"></p></section>
-<p class="footer">Breiten standardmäßig in <b>cm</b>, Längen in <b>m</b>, Stärke in <b>mm</b>. Beispielsweise bedeutet „40, 30, 25“ drei Bohlen. <b>40x3</b> erfasst drei gleich breite Bohlen. Für Breiten mit Nachkommastelle einen Punkt verwenden (z. B. 32.5). Änderungen werden nur auf diesem Gerät im Browser gespeichert. Bestehende Daten der vorherigen Version werden beim ersten Öffnen übernommen; deren Originalspeicher bleibt unangetastet.<br>HolzOptiX Mobil · Version 2.1 · <a href="./aktualisieren.html">Offline-Version aktualisieren</a></p>
+<section class="card no-print"><div class="card-head"><h2>Ergebnis sichern</h2><span class="sub">Für Büro und Baustelle</span></div><div class="toolbar"><button class="btn btn-secondary" id="csv" type="button">CSV exportieren</button><button class="btn btn-secondary" id="print" type="button">Sortiert drucken</button><button class="btn btn-primary" id="pdf" type="button">PDF ohne Internetadresse</button><button class="btn btn-secondary" id="backup" type="button">Sicherung (JSON)</button><button class="btn btn-secondary" id="restore" type="button">Sicherung öffnen</button><button class="btn btn-danger" id="clear" type="button">Neue Liste beginnen</button></div><p class="note">Für einen Ausdruck garantiert ohne Webseitenadresse zuerst „PDF ohne Internetadresse“ herunterladen und diese PDF drucken. Die Liste wird bei beiden Ausgaben sortiert. Deine Eingaben bleiben unverändert.</p><input id="restore-file" type="file" accept=".json,application/json" hidden><p class="status" id="status" role="status"></p></section>
+<p class="footer">Breiten standardmäßig in <b>cm</b>, Längen in <b>m</b>, Stärke in <b>mm</b>. Beispielsweise bedeutet „40, 30, 25“ drei Bohlen. <b>40x3</b> erfasst drei gleich breite Bohlen. Für Breiten mit Nachkommastelle einen Punkt verwenden (z. B. 32.5). Änderungen werden nur auf diesem Gerät im Browser gespeichert. Bestehende Daten der vorherigen Version werden beim ersten Öffnen übernommen; deren Originalspeicher bleibt unangetastet.<br>HolzOptiX Mobil · Version 2.3 · <a href="./aktualisieren.html">Offline-Version aktualisieren</a></p>
 <section id="print-sheet" class="print-sheet" aria-label="Sortierte Druckliste">
-<div class="print-header"><div><div class="print-brand">HolzOptiX</div><div class="print-heading">Bohlenliste</div><div class="print-muted" id="print-project"></div><div class="print-muted">Sortiert: Länge kurz → lang, Breite schmal → breit</div></div><div class="print-date" id="print-date"></div></div>
+<div class="print-header"><div><div class="print-heading">Bohlenliste</div><div class="print-muted" id="print-project"></div><div class="print-muted">Sortiert: Länge kurz → lang, Breite schmal → breit</div></div><div class="print-date" id="print-date"></div></div>
 <table><thead><tr><th>Länge (m)</th><th>Breite (cm)</th><th>Stärke (mm)</th><th>Anzahl</th><th>Volumen (m³)</th><th class="print-note">Notiz</th></tr></thead><tbody id="print-rows"></tbody><tfoot><tr><td colspan="3">Gesamt</td><td id="print-qty"></td><td id="print-sum"></td><td></td></tr></tfoot></table>
-<div class="print-bottom">Alle Maße und Mengen sind aus den erfassten Bohlen berechnet. Gleiche Maße und Stärken sind zusammengefasst.</div>
+
 </section>
 </div>
 <template id="entry-template"><article class="card entry"><div class="row-top"><span class="row-index">LÄNGE 01</span><button type="button" class="delete no-print" aria-label="Längenreihe löschen">Entfernen</button></div><div class="dims"><label class="dim-label">Länge<div class="dim-wrap"><input class="dim-input length" type="text" inputmode="decimal" placeholder="4,50" autocomplete="off"><span class="suffix">m</span></div></label><label class="dim-label">Stärke<div class="dim-wrap"><input class="dim-input thick" type="text" inputmode="decimal" placeholder="40" autocomplete="off"><span class="suffix">mm</span></div></label></div><div class="input-block"><label>Bohlenbreiten (cm) – einfach hintereinander</label><textarea class="widths" rows="2" inputmode="decimal" placeholder="40, 30, 25, 30, 40, 40, 40" spellcheck="false"></textarea></div><div class="invalid" hidden></div><div class="row-foot"><small class="count">0 Bohlen</small><strong class="volume">0,0000 m³</strong></div><input class="row-note no-print" type="text" maxlength="90" placeholder="Notiz für diese Länge (optional)" autocomplete="off"></article></template>
@@ -140,8 +139,100 @@ function updatePrintable(){
   $('print-qty').textContent=fmtN(qty);
   $('print-sum').textContent=fmtV(volume);
 }
-window.addEventListener('beforeprint',updatePrintable);
+// Druckausgabe bewusst neutral: kein Produktname, Logo oder Signatur.
+// Auch den vom Browser verwendeten Dokumenttitel beim Drucken neutralisieren.
+const originalPageTitle=document.title;
+window.addEventListener('beforeprint',()=>{
+  updatePrintable();
+  document.title='Bohlenliste';
+});
+window.addEventListener('afterprint',()=>{document.title=originalPageTitle});
 $('print').addEventListener('click',()=>{updatePrintable();window.print()});
+
+// Unabhängige PDF-Erzeugung im Browser: kein Druckdialog der Webseite,
+// keine vom Browser hinzugefügten Kopf-/Fußzeilen und keine GitHub-Adresse.
+// Offline-fähig, ohne externe Bibliotheken oder Online-Dienste.
+function pdfSafe(value){
+  const replacements={'–':'-','—':'-','−':'-','→':'->','←':'<-','“':'"','”':'"','„':'"','’':"'",'‘':"'",'•':'-','…':'...','\n':' '};
+  return String(value??'').replace(/[\r\n\t]+/g,' ').replace(/[^\x20-\x7E\xA0-\xFF]/g,ch=>replacements[ch]||'?')
+    .replace(/\\/g,'\\\\').replace(/\(/g,'\\(').replace(/\)/g,'\\)');
+}
+function buildBohlenPdf(){
+  const rows=buildSortedPrintRows();
+  if(!rows.length)throw Error('Bitte zuerst gültige Bohlen eingeben.');
+  const allPages=[];
+  let drawing=[], y=0, qty=0, total=0;
+  const tx=(x,at,text,size=9,bold=false)=>drawing.push(`BT /${bold?'F2':'F1'} ${size} Tf 1 0 0 1 ${x} ${at} Tm (${pdfSafe(text)}) Tj ET`);
+  const ln=(x1,y1,x2,y2)=>drawing.push(`0.65 0.71 0.66 RG 0.5 w ${x1} ${y1} m ${x2} ${y2} l S`);
+  const headings=[['Länge (m)',36],['Breite (cm)',119],['Stärke (mm)',208],['Anzahl',294],['Volumen (m³)',355],['Notiz',458]];
+  function startPage(){
+    drawing=[];allPages.push(drawing);
+    tx(36,806,'Bohlenliste',18,true);
+    const project=(state.project.trim()||'Ohne Auftragsbezeichnung').slice(0,55);
+    tx(36,783,project,10);
+    tx(440,806,new Date().toLocaleDateString('de-DE'),9);
+    tx(36,766,'Sortiert: Länge kurz - lang, Breite schmal - breit',8);
+    ln(36,754,559,754);
+    drawing.push('0.93 0.96 0.93 rg 36 724 523 26 re f 0 0 0 rg');
+    headings.forEach(([label,x])=>tx(x,734,label,8,true));
+    y=713;
+  }
+  startPage();
+  for(const [i,r] of rows.entries()){
+    if(y<65)startPage();
+    const vol=r.length*r.thick*r.width*r.qty/100000;
+    qty+=r.qty;total+=vol;
+    if(i%2===1)drawing.push(`0.972 0.978 0.972 rg 36 ${y-6} 523 18 re f 0 0 0 rg`);
+    const lengthFmt=new Intl.NumberFormat('de-DE',{minimumFractionDigits:2,maximumFractionDigits:3}).format(r.length);
+    const vals=[lengthFmt,fmtN(r.width),fmtN(r.thick),fmtN(r.qty),fmtV(vol),r.note.slice(0,16)];
+    vals.forEach((v,j)=>tx(headings[j][1],y,v,8.5));
+    y-=19;
+  }
+  if(y<75)startPage();
+  ln(36,y+1,559,y+1);
+  drawing.push(`0.93 0.96 0.93 rg 36 ${y-28} 523 27 re f 0 0 0 rg`);
+  tx(36,y-17,'GESAMT',10,true);
+  tx(294,y-17,fmtN(qty),10,true);
+  tx(355,y-17,fmtV(total)+' m³',10,true);
+  // PDF-Byte-Serialisierung mit WinAnsi für deutsche Umlaute.
+  const latinBytes=text=>{const out=new Uint8Array(text.length);for(let i=0;i<text.length;i++)out[i]=text.charCodeAt(i)&255;return out};
+  const objs={
+    1:'<< /Type /Catalog /Pages 2 0 R >>',
+    3:'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>',
+    4:'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>'
+  };
+  const kids=[];
+  allPages.forEach((commands,i)=>{
+    const pageId=5+2*i,streamId=pageId+1;
+    kids.push(pageId+' 0 R');
+    objs[pageId]=`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ${streamId} 0 R >>`;
+    const stream=commands.join('\n')+'\n';
+    objs[streamId]=`<< /Length ${latinBytes(stream).length} >>\nstream\n${stream}endstream`;
+  });
+  objs[2]=`<< /Type /Pages /Kids [${kids.join(' ')}] /Count ${allPages.length} >>`;
+  let parts=[],byteCount=0;
+  const append=t=>{const bytes=latinBytes(t);parts.push(bytes);byteCount+=bytes.length};
+  const offsets=[0],count=4+2*allPages.length;
+  append('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n');
+  for(let i=1;i<=count;i++){
+    offsets[i]=byteCount;
+    append(i+' 0 obj\n'+objs[i]+'\nendobj\n');
+  }
+  const xref=byteCount;
+  append(`xref\n0 ${count+1}\n0000000000 65535 f \n`);
+  for(let i=1;i<=count;i++)append(String(offsets[i]).padStart(10,'0')+' 00000 n \n');
+  append(`trailer\n<< /Size ${count+1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`);
+  return new Blob(parts,{type:'application/pdf'});
+}
+$('pdf').addEventListener('click',()=>{
+  try{
+    const blob=buildBohlenPdf(),url=URL.createObjectURL(blob),a=document.createElement('a');
+    const clean=(state.project.trim()||'Bohlenliste').replace(/[^a-zA-Z0-9äöüÄÖÜß\-_ ]/g,'').trim().replace(/\s+/g,'-').slice(0,45)||'Bohlenliste';
+    a.href=url;a.download=clean+'-Bohlenliste.pdf';document.body.append(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),30000);
+    $('status').textContent='PDF ohne Internetadresse erstellt. Diese PDF öffnen und drucken.';
+  }catch(e){$('status').textContent=e.message||'PDF konnte nicht erzeugt werden.'}
+});
 $('backup').addEventListener('click',()=>{download(JSON.stringify({...state,exportedAt:new Date().toISOString()},null,2),filename('Sicherung.json'),'application/json');$('status').textContent='JSON-Sicherung wurde erstellt.'});
 $('restore').addEventListener('click',()=>$('restore-file').click());
 $('restore-file').addEventListener('change',async e=>{const file=e.target.files[0];e.target.value='';if(!file)return;try{if(file.size>3e6)throw Error('Datei zu groß');const obj=JSON.parse(await file.text());if(obj.version!==2||!Array.isArray(obj.rows)||obj.rows.length>1000)throw Error('Unbekanntes Format');const next={version:2,project:String(obj.project||'').slice(0,120),defaultThick:String(obj.defaultThick||'40').slice(0,20),rows:obj.rows.map(cleanRow).filter(Boolean)};if(!confirm('Aktuelle Liste durch diese Sicherung ersetzen?'))return;state=next;refreshFields();draw();save();$('status').textContent='Sicherung geladen.'}catch(e){$('status').textContent='Sicherung konnte nicht geöffnet werden.'}});
@@ -150,7 +241,7 @@ let dark=false;try{let theme=JSON.parse(localStorage.getItem(THEME));dark=theme=
 function setTheme(v){dark=v;document.documentElement.dataset.theme=v?'dark':'light';$('theme-btn').textContent=v?'☀ Hell':'☾ Dunkel';try{localStorage.setItem(THEME,JSON.stringify(v?'dark':'light'))}catch(e){}}
 $('theme-btn').addEventListener('click',()=>setTheme(!dark));
 restoreLoaded();refreshFields();draw();save();setTheme(dark);
-if('serviceWorker' in navigator && location.protocol.startsWith('http'))window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js?v=2.1.0',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{});let refreshing=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload()}})});
+if('serviceWorker' in navigator && location.protocol.startsWith('http'))window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js?v=2.3.0',{updateViaCache:'none'}).then(reg=>reg.update()).catch(()=>{});let refreshing=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!refreshing){refreshing=true;location.reload()}})});
 })();
 </script>
 </body>

@@ -1,4 +1,4 @@
-HOLZOPTIX MOBIL – KUBIKMETER-SCHNELLERFASSUNG V2.1
+HOLZOPTIX MOBIL – KUBIKMETER-SCHNELLERFASSUNG V2.3
 
 GitHub Pages aktualisieren:
 1. ZIP auf dem PC entpacken.
@@ -30,12 +30,17 @@ für Übertragung JSON-Sicherung exportieren und importieren.
 Wenn bei GitHub Pages die alten Daten nicht auftauchen, sicherstellen,
 dass die URL (Domain/Repository-Pfad) gleich geblieben ist.
 
-Druck / PDF (NEU):
+Druck / PDF (OHNE BRANDING UND WEBADRESSE):
 - Die Eingabereihenfolge bleibt wie eingetippt.
 - Für Druck/PDF werden Längen aufsteigend (kurz nach lang) sortiert.
 - Bei gleicher Länge stehen die Breiten aufsteigend (schmal nach breit).
 - Identische Länge, Breite, Stärke und Notiz werden zu einer Anzahl zusammengefasst.
 - Die Kubikmeter je Maß und die Gesamtsumme werden im Ausdruck angezeigt.
+- Auf dem Ausdruck erscheint weder HolzOptiX noch ein Logo oder eine Signatur.
+- Das PDF bekommt als vorgeschlagenen Titel „Bohlenliste“.
+- Der neue Button „PDF ohne Internetadresse“ erstellt eine eigenständige A4-PDF-Datei direkt auf dem Gerät. In dieser PDF stehen keine Webseitenadresse oder Browser-Kopf-/Fußzeilen.
+- Der normale Browserdruck versucht die Internetadresse über @page margin:0 zu unterdrücken. Einzelne Browser/Druckertreiber können das übersteuern; die direkte PDF ist die sichere Alternative.
+- PDF-Datei zum Drucken öffnen (auch auf Mobilgeräten).
 - Die Druckfunktion funktioniert auch über das Browser-Menü / Strg+P.
 - Die gespeicherten Eingaben und vorhandenen Sicherungen bleiben unverändert.
 
