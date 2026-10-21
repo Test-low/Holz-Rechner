@@ -1,28 +1,26 @@
-// HolzOptiX: Network-first for the page so new GitHub releases take effect.
-const CACHE_NAME = 'holzoptix-m3-v3';
-const ASSETS = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
+/* HolzOptiX Mobil v1.0.2: network-first, updated cache namespace. */
+const CACHE_NAME = 'holzoptix-m3-v102-20261021';
+const ASSETS = ['./index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png'];
 self.addEventListener('install', event => {
-  event.waitUntil(caches.open(CACHE_NAME)
-    .then(cache => cache.addAll(ASSETS))
-    .then(() => self.skipWaiting()));
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
 });
 self.addEventListener('activate', event => {
-  event.waitUntil(caches.keys().then(keys => Promise.all(
-    keys.filter(k => (k.startsWith('holzoptix-m3-') || k.startsWith('holzwerk-m3-')) && k !== CACHE_NAME).map(k => caches.delete(k))
-  )).then(() => self.clients.claim()));
+  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k =>
+    (k.startsWith('holzoptix-m3-') || k.startsWith('holzwerk-m3-')) && k !== CACHE_NAME
+  ).map(k => caches.delete(k)))).then(() => self.clients.claim()));
 });
 self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET' || new URL(event.request.url).origin !== self.location.origin) return;
-  const req = event.request;
-  if (req.mode === 'navigate') {
-    event.respondWith(fetch(req).then(response => {
-      if (response.ok) {
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then(cache => cache.put('./index.html', clone)).catch(() => {});
+  const url = new URL(event.request.url);
+  if (event.request.method !== 'GET' || url.origin !== self.location.origin) return;
+  if (event.request.mode === 'navigate') {
+    event.respondWith(fetch(event.request, {cache: 'no-store'}).then(response => {
+      if (response.ok && (url.pathname.endsWith('/') || url.pathname.endsWith('/index.html'))) {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then(cache => cache.put('./index.html', copy)).catch(() => {});
       }
       return response;
     }).catch(() => caches.match('./index.html')));
     return;
   }
-  event.respondWith(caches.match(req).then(cached => cached || fetch(req)));
+  event.respondWith(caches.match(event.request).then(cached => cached || fetch(event.request)));
 });

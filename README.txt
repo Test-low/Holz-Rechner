@@ -1,25 +1,37 @@
-HolzOptiX – Kubikmeter-Rechner fuer GitHub Pages
+HolzOptiX Mobil – GitHub Pages – Version 1.0.2
 ===============================================
 
-WICHTIG: DIE DATEIEN WERDEN ERSETZT, NICHT DIE GESPEICHERTEN POSITIONEN.
+WICHTIG: Es müssen die Dateien im HAUPTORDNER des bereits
+veröffentlichten GitHub-Repositories ersetzt werden.
+NICHT den Ordner dieser ZIP in das Repository laden.
 
-1. ZIP entpacken.
-2. Die Dateien index.html, sw.js, manifest.webmanifest und den Ordner icons
-   im selben GitHub-Repository in den HAUPTORDNER hochladen.
-   Bestehende gleichnamige Dateien mit diesen Versionen ERSETZEN.
-3. Unter Settings -> Pages muss main / (root) eingestellt sein.
-4. Nach GitHub Pages Deployment die Webseite neu laden.
-   Wenn noch die alte Ueberschrift erscheint: im Browser neu laden,
-   ggf. die Seite einmal schliessen und neu oeffnen.
-   Bei installierter Startbildschirm-App diese schliessen und neu oeffnen.
-5. Der Offline-Cache ist aktualisiert, damit die Seite bei zukuenftigen
-   Updates online zuerst die neue Version abruft. Ohne Internet bleibt
-   die zuletzt gespeicherte Version verfuegbar.
+Upload:
+1) ZIP auf dem PC entpacken.
+2) GitHub -> das Repository -> Code -> Add file -> Upload files.
+3) Den INHALT des entpackten Ordners hochladen:
+   index.html
+   sw.js
+   manifest.webmanifest
+   aktualisieren.html
+   icons/icon-192.png und icons/icon-512.png
+   (den README musst du nicht hochladen)
+4) Wenn im Repository bereits eine index.html im Hauptverzeichnis liegt,
+   diese MIT DER NEUEN DATEI ERSETZEN, nicht in einem Unterordner ablegen.
+5) Commit changes. GitHub -> Settings -> Pages: main / (root).
+6) Wenn die alte Überschrift bleibt: die veröffentlichte Seitenadresse
+   direkt mit /aktualisieren.html öffnen, z. B.:
+   https://BENUTZER.github.io/REPOSITORY/aktualisieren.html
+   Dann den grünen Button antippen.
 
-Datenerhalt:
-- Gleiches Repository und gleiche URL: bisherige lokal gespeicherte
-  Positionen und Hell/Dunkel-Einstellung bleiben auf dem Geraet.
-- Andere URL oder Domain: Browserdaten werden nicht automatisch uebertragen.
-- Alte interne Speicherkennungen dienen ausschliesslich der Uebernahme.
+Schnelltest ohne Löschen: /index.html?holzo-update=102 aufrufen.
+Wenn die URL noch den alten Namen zeigt, liegt die neue index.html NICHT
+am veröffentlichten GitHub-Pages-Speicherort.
 
-Formel: m³ = Staerke [m] x Breite [m] x Laenge [m] x Stueckzahl.
+Datensicherheit:
+- Die Aktualisierungsseite leert KEIN localStorage. Gespeicherte
+  Positionen und Theme bleiben auf dem selben Browser/URL vorhanden.
+- Bestehende Speicherkennungen werden zur Datenübernahme weiterhin erkannt.
+- NICHT Browser-Website-Daten/Storage manuell löschen; das kann
+  gespeicherte Positionen löschen.
+
+Auf der neuen Seite steht oben HOLZOPTIX / MOBIL und unten Version 1.0.2.

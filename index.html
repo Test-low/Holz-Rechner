@@ -9,7 +9,8 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" type="image/png" href="./icons/icon-192.png">
   <link rel="apple-touch-icon" href="./icons/icon-192.png">
-  <title>Kubikmeter-Rechner | HolzOptiX</title>
+  <title>HolzOptiX – Kubikmeter-Rechner</title>
+  <meta name="application-name" content="HolzOptiX Kubikmeter">
   <style>
     :root {
       color-scheme: light;
@@ -147,7 +148,7 @@
 <body>
   <main class="shell">
     <header class="topbar">
-      <div class="identity"><span class="brandmark" aria-hidden="true">m³</span><span>HolzOptiX <span style="color:var(--green)">/</span> MOBIL</span></div>
+      <div class="identity"><span class="brandmark" aria-hidden="true">m³</span><span>HOLZOPTIX <span style="color:var(--green)">/</span> MOBIL</span></div>
       <button id="theme-toggle" class="theme-button" type="button" aria-label="Darstellung wechseln">☾ <span id="theme-label">Dunkel</span></button>
     </header>
 
@@ -224,6 +225,7 @@
       </div>
     </div>
     <p class="app-note">Die Positionen bleiben auf diesem Gerät im Browser gespeichert. Die Berechnung funktioniert auch ohne Internet. Für eine dauerhafte Nutzung kannst du die Seite zum Startbildschirm hinzufügen.</p>
+    <p style="font-size:.72rem;color:var(--muted);margin-top:22px">HolzOptiX Mobil · Version 1.0.2 · <a href="./aktualisieren.html" style="color:inherit">Anzeige aktualisieren</a></p>
   </main>
   <script>
   (() => {
@@ -435,7 +437,7 @@
     render();
     if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(reg => reg.update()).catch(() => {});
+        navigator.serviceWorker.register('./sw.js?v=1.0.2', { updateViaCache: 'none' }).then(reg => reg.update()).catch(() => {});
         let refreshing = false;
         navigator.serviceWorker.addEventListener('controllerchange', () => {
           if (!refreshing) { refreshing = true; window.location.reload(); }
